@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="SQEZX3D — original cinematic 3D website library">
+<title>SQEZX3D — 3D Web Experiences</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#05040b;color:#f7f7fb;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-10;background:
+radial-gradient(circle at 18% 8%,#7546ff38,transparent 25%),
+radial-gradient(circle at 88% 34%,#18d5ff18,transparent 24%),
+radial-gradient(circle at 45% 82%,#5228b51c,transparent 30%),#05040b}
+a{color:inherit;text-decoration:none}button{font:inherit}
+.wrap{width:min(1180px,calc(100% - 36px));margin:auto}
+.nav{position:fixed;top:0;left:0;right:0;height:72px;z-index:100;background:#05040bcc;backdrop-filter:blur(18px);border-bottom:1px solid #ffffff0d}
+.navin{height:100%;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:14px;font-weight:950;letter-spacing:4px}.logo span{color:#a78bfa}
+.navlinks{display:flex;gap:25px;font-size:11px;color:#a7a3b1}.navlinks a:hover{color:#fff}
+.navbtn{border:1px solid #ffffff22;background:#fff;color:#08070d;border-radius:999px;padding:10px 17px;font-size:10px;font-weight:850}
+
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;padding:120px 0 80px;overflow:hidden}
+.heroGrid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.kicker{font-size:10px;letter-spacing:3px;color:#9b90ae;text-transform:uppercase}
+h1{font-size:clamp(58px,8vw,104px);line-height:.86;letter-spacing:-7px;margin:18px 0 24px;max-width:650px}
+.gradient{background:linear-gradient(110deg,#fff 20%,#a78bfa 50%,#b7ffd5 78%,#fff);background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:textFlow 7s ease-in-out infinite}
+@keyframes textFlow{50%{background-position:100%}}
+.hero p{max-width:520px;color:#aaa5b5;line-height:1.8;font-size:14px}
+.actions{display:flex;gap:9px;margin-top:28px}.btn{border:1px solid #ffffff1d;background:#ffffff08;color:#fff;border-radius:999px;padding:11px 16px;font-size:10px}.btn.primary{background:#fff;color:#08070d;border-color:#fff;font-weight:900}
+.heroVisual{height:570px;position:relative;perspective:1200px}
+.scene{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .25s ease-out}
+.halo{position:absolute;left:50%;top:50%;width:430px;height:430px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#a78bfa22,transparent 65%);filter:blur(5px);animation:halo 5s ease-in-out infinite}
+@keyframes halo{50%{transform:translate(-50%,-50%) scale(1.12);opacity:.65}}
+.orbit{position:absolute;left:50%;top:50%;border:1px solid #c4b6ff28;border-radius:50%;transform-style:preserve-3d}
+.o1{width:430px;height:170px;transform:translate(-50%,-50%) rotateX(70deg);animation:orbit 11s linear infinite}.o2{width:350px;height:140px;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(55deg);animation:orbit 15s linear infinite reverse}.o3{width:520px;height:205px;transform:translate(-50%,-50%) rotateX(72deg) rotateZ(-32deg);animation:orbit 19s linear infinite}
+@keyframes orbit{to{transform:translate(-50%,-50%) rotateX(70deg) rotateZ(360deg)}}
+.object{position:absolute;left:50%;top:50%;width:210px;height:210px;transform:translate(-50%,-50%) rotateX(18deg) rotateY(-25deg);transform-style:preserve-3d;animation:objectFloat 6s ease-in-out infinite}
+@keyframes objectFloat{50%{transform:translate(-50%,-55%) rotateX(24deg) rotateY(25deg)}}
+.objFace{position:absolute;inset:0;border:1px solid #e5ddff7a;background:linear-gradient(145deg,#e8e0ff35,#171126cc 50%,#0b0912);box-shadow:inset 0 0 50px #a78bfa18,0 0 45px #a78bfa18}
+.obj1{transform:translateZ(105px) rotateZ(45deg)}.obj2{transform:translateZ(-105px) rotateZ(45deg)}.obj3{transform:rotateY(90deg) translateZ(105px) rotateZ(45deg)}.obj4{transform:rotateY(-90deg) translateZ(105px) rotateZ(45deg)}.obj5{transform:rotateX(90deg) translateZ(105px) rotateZ(45deg)}.obj6{transform:rotateX(-90deg) translateZ(105px) rotateZ(45deg)}
+.core{position:absolute;left:50%;top:50%;width:62px;height:62px;transform:translate(-50%,-50%) translateZ(8px);border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9f7cff 20%,#4b2e9c 48%,#09070e 75%);box-shadow:0 0 25px #a27cff,0 0 90px #744dff55}
+.dot{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 18px #fff}
+.d1{left:8%;top:18%;animation:float 5s infinite}.d2{right:12%;top:20%;animation:float 7s infinite reverse}.d3{left:18%;bottom:16%;animation:float 6s 1s infinite}.d4{right:8%;bottom:28%;animation:float 4s 2s infinite}
+@keyframes float{50%{transform:translate(28px,-22px);opacity:.25}}
+
+.section{padding:125px 0;position:relative}
+.sectionTitle{font-size:clamp(42px,6vw,74px);line-height:.9;letter-spacing:-5px;margin:12px 0 18px}
+.muted{color:#aaa5b5;line-height:1.8;font-size:13px;max-width:650px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:55px}
+.card{min-height:280px;padding:24px;border:1px solid #ffffff14;border-radius:20px;background:linear-gradient(145deg,#ffffff0a,#ffffff02);position:relative;overflow:hidden;transition:transform .5s ease,border-color .5s ease,box-shadow .5s ease}
+.card:before{content:"";position:absolute;width:230px;height:230px;right:-90px;top:-80px;background:radial-gradient(circle,#936cff24,transparent 68%);filter:blur(10px);animation:cardGlow 6s ease-in-out infinite}
+.card:hover{transform:translateY(-10px);border-color:#b89cff38;box-shadow:0 25px 80px #0009}
+@keyframes cardGlow{50%{transform:scale(1.3) translate(-25px,20px)}}
+.cardNo{font-size:9px;letter-spacing:2px;color:#777083}.card h3{font-size:22px;margin:42px 0 10px}.card p{font-size:12px;color:#9994a5;line-height:1.7}.cardFoot{position:absolute;left:24px;right:24px;bottom:20px;display:flex;justify-content:space-between;align-items:center}.badge{font-size:9px;color:#b7a5ff;border:1px solid #9d7cff28;border-radius:99px;padding:7px 10px}.card button{border:1px solid #ffffff1b;background:#fff;color:#09080e;border-radius:99px;padding:8px 12px;font-size:9px;font-weight:850}
+
+.story{min-height:800px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.storyVisual{height:520px;position:relative;perspective:1000px}.floatingShape{position:absolute;left:50%;top:50%;width:270px;height:270px;transform:translate(-50%,-50%) rotateX(50deg) rotateZ(25deg);border:1px solid #b79dff80;background:linear-gradient(135deg,#9b75ff35,#171124dd);box-shadow:0 0 90px #7c52ff35,inset 0 0 55px #d7c8ff14;animation:shape 7s ease-in-out infinite}
+@keyframes shape{50%{transform:translate(-50%,-54%) rotateX(65deg) rotateZ(205deg) scale(1.08)}}
+.shape2{position:absolute;left:25%;top:65%;width:90px;height:90px;border-radius:22px;background:linear-gradient(145deg,#d8f9ff,#6356ff 45%,#101018);box-shadow:0 0 50px #6edcff33;animation:shape2 5s ease-in-out infinite}
+@keyframes shape2{50%{transform:translate(30px,-60px) rotate(120deg)}}
+.storyVisual:after{content:"";position:absolute;inset:8%;border:1px solid #ffffff0d;border-radius:50%;transform:rotateX(65deg);animation:orbit 18s linear infinite}
+
+.reveal{opacity:0;transform:translateY(50px) scale(.98);transition:opacity .9s ease,transform 1s cubic-bezier(.2,.8,.2,1)}.reveal.show{opacity:1;transform:none}
+.slideL{transform:translateX(-60px)}.slideR{transform:translateX(60px)}.slideL.show,.slideR.show{transform:none}
+
+.footer{padding:55px 0;border-top:1px solid #ffffff0c;color:#706a78;font-size:10px}.foot{display:flex;justify-content:space-between}
+
+.modal{position:fixed;inset:0;z-index:300;background:#000c;backdrop-filter:blur(16px);display:none;place-items:center;padding:18px}.modal.show{display:grid}.modalBox{width:min(600px,100%);border:1px solid #ffffff18;border-radius:24px;background:#0b0911;padding:28px;position:relative;box-shadow:0 40px 120px #000}
+.close{position:absolute;right:14px;top:12px;border:1px solid #ffffff18;background:#ffffff08;color:#fff;border-radius:50%;width:34px;height:34px}.modalPreview{height:180px;margin:-28px -28px 24px;background:radial-gradient(circle,#7956ff25,transparent 45%),#05040b;display:grid;place-items:center;overflow:hidden}.modalCube{width:75px;height:75px;border:1px solid #fff8;background:#9a76ff20;transform:rotateX(55deg) rotateY(45deg);box-shadow:0 0 50px #8d65ff55;animation:modalSpin 6s linear infinite}@keyframes modalSpin{to{transform:rotateX(55deg) rotateY(405deg)}}
+.modalBox h3{font-size:30px;margin:8px 0}.modalBox p{color:#aaa5b5;font-size:13px;line-height:1.7}.modalInfo{margin-top:18px;padding:13px;border:1px solid #ffffff10;border-radius:12px;color:#888290;font-size:10px;line-height:1.7}
+
+@media(max-width:850px){.navlinks{display:none}.heroGrid,.story{grid-template-columns:1fr}.heroVisual{height:500px}.cards{grid-template-columns:1fr}.hero{padding-top:120px}.story{gap:20px}}
+@media(max-width:520px){h1{letter-spacing:-4px}.heroVisual{height:420px}.object{transform:translate(-50%,-50%) scale(.72) rotateX(18deg) rotateY(-25deg)}.wrap{width:min(100% - 24px,1180px)}.foot{flex-direction:column;gap:10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.cardGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:35px}
+.websiteCard{min-height:330px;cursor:pointer;transform-style:preserve-3d}
+.websiteCard:hover{transform:translateY(-10px) rotateX(2deg) rotateY(-2deg)}
+.cardContent{position:relative;z-index:5}.cardScene{position:absolute;inset:0;overflow:hidden;pointer-events:none;perspective:800px}
+.cardGlow{position:absolute;width:230px;height:230px;left:50%;top:43%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#9d79ff32,transparent 65%);filter:blur(8px);animation:cardPulse 4.5s ease-in-out infinite}
+.miniShape{position:absolute;width:95px;height:95px;left:50%;top:43%;transform:translate(-50%,-50%) rotateX(52deg) rotateZ(45deg);border:1px solid #d8ceff99;background:linear-gradient(145deg,#c8b8ff32,#151020);box-shadow:inset 0 0 30px #b496ff22,0 0 35px #835dff22;animation:miniSpin 7s linear infinite}
+.miniOrbit{position:absolute;width:190px;height:62px;left:50%;top:43%;transform:translate(-50%,-50%) rotateX(68deg);border:1px solid #bba7ff28;border-radius:50%;animation:miniOrbit 8s linear infinite}
+.miniDot{position:absolute;width:5px;height:5px;left:calc(50% + 91px);top:calc(43% - 3px);background:#e9e2ff;border-radius:50%;box-shadow:0 0 14px #fff;animation:dotOrbit 8s linear infinite}
+@keyframes miniSpin{to{transform:translate(-50%,-50%) rotateX(52deg) rotateZ(405deg)}}@keyframes miniOrbit{to{transform:translate(-50%,-50%) rotateX(68deg) rotateZ(360deg)}}@keyframes cardPulse{50%{transform:translate(-50%,-50%) scale(1.2);opacity:.55}}
+.websiteCard .cardContent h3{margin-top:165px}.websiteCard .cardFoot{z-index:8}.previewBtn{transition:.25s ease}.websiteCard:hover .previewBtn{box-shadow:0 0 25px #a78bfa35}
+.loadingCard{margin-top:18px;min-height:100px;padding:18px 22px;border:1px solid #ffffff12;border-radius:18px;background:linear-gradient(90deg,#0a0810,#11101a,#0a0810);display:grid;grid-template-columns:72px 1fr 160px;align-items:center;gap:18px;overflow:hidden;position:relative}
+.loadingCard:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ffffff09,transparent);transform:translateX(-100%);animation:loadingSweep 2.4s infinite}@keyframes loadingSweep{to{transform:translateX(100%)}}
+.loaderOrb{width:54px;height:54px;border:1px solid #b49aff55;border-radius:50%;position:relative;box-shadow:0 0 30px #8a60ff22;animation:loaderSpin 3s linear infinite}.loaderOrb:before{content:"";position:absolute;width:8px;height:8px;left:50%;top:-4px;background:#fff;border-radius:50%;box-shadow:0 0 15px #fff}.loaderOrb:after{content:"";position:absolute;inset:8px;border:1px dashed #a78bfa55;border-radius:50%}@keyframes loaderSpin{to{transform:rotate(360deg)}}
+.loaderLabel{font-size:8px;letter-spacing:2px;color:#81788e}.loadingCard h3{font-size:15px;margin:5px 0}.loadingCard p{font-size:10px;color:#777281;margin:0}.loaderProgress{height:2px;background:#ffffff0d;overflow:hidden}.loaderProgress i{display:block;width:45%;height:100%;background:linear-gradient(90deg,transparent,#a78bfa,transparent);animation:progress 2s ease-in-out infinite}@keyframes progress{50%{transform:translateX(120%)}}
+.storyStrip{margin-top:70px;border:1px solid #ffffff12;border-radius:24px;min-height:260px;padding:28px;display:grid;grid-template-columns:280px 1fr;gap:35px;align-items:center;background:linear-gradient(145deg,#ffffff08,#ffffff02);overflow:hidden}.stripVisual{height:205px;position:relative;display:grid;place-items:center;perspective:700px}.stripCube{width:105px;height:105px;border:1px solid #e8e0ff99;background:#a486ff18;transform:rotateX(55deg) rotateY(35deg) rotateZ(25deg);box-shadow:0 0 50px #8d64ff33;animation:stripSpin 8s linear infinite}.stripVisual span{position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;box-shadow:0 0 14px #fff;animation:stripFloat 4s ease-in-out infinite}.stripVisual span:nth-child(2){left:20%;top:25%}.stripVisual span:nth-child(3){right:20%;top:35%;animation-delay:1s}.stripVisual span:nth-child(4){left:35%;bottom:15%;animation-delay:2s}@keyframes stripSpin{to{transform:rotateX(55deg) rotateY(395deg) rotateZ(25deg)}}@keyframes stripFloat{50%{transform:translate(20px,-20px);opacity:.25}}
+@media(max-width:900px){.cardGrid{grid-template-columns:repeat(2,1fr)}.loadingCard{grid-template-columns:60px 1fr}.loaderProgress{display:none}.storyStrip{grid-template-columns:1fr}}
+@media(max-width:600px){.cardGrid{grid-template-columns:1fr}.loadingCard{grid-template-columns:55px 1fr}.websiteCard{min-height:300px}}
+
+
+.modalPreview{height:250px!important;position:relative;background:radial-gradient(circle,#805dff2b,transparent 45%),#05040b!important}
+.modalScene{position:relative;width:100%;height:100%;display:grid;place-items:center;perspective:900px}
+.modalShape{width:130px;height:130px;border:1px solid #e9e2ff99;background:linear-gradient(145deg,#b89cff35,#0f0b18);transform:rotateX(55deg) rotateY(45deg) rotateZ(45deg);box-shadow:0 0 70px #9369ff45;animation:modalHeavy 7s linear infinite}
+.modalOrbit{position:absolute;width:300px;height:90px;border:1px solid #c8b6ff38;border-radius:50%;transform:rotateX(68deg);animation:modalOrbitSpin 9s linear infinite}
+.modalCore{position:absolute;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 0 30px #fff,0 0 70px #9670ff;animation:corePulse 2.5s ease-in-out infinite}
+.copyStatus{font-size:10px;color:#9fffc0;margin-top:10px;min-height:15px}
+@keyframes modalHeavy{to{transform:rotateX(55deg) rotateY(405deg) rotateZ(45deg)}}@keyframes modalOrbitSpin{to{transform:rotateX(68deg) rotateZ(360deg)}}@keyframes corePulse{50%{transform:scale(1.5);opacity:.6}}
+
+
+/* Compact spacing */
+.section{padding-top:72px!important;padding-bottom:72px!important}
+.wrap{max-width:1180px}
+.cardGrid{gap:11px!important;margin-top:24px!important}
+.websiteCard{min-height:300px!important}
+.storyStrip{margin-top:48px!important}
+.loadingCard{margin-top:12px!important}
+
+/* Cinematic startup loader */
+.startupLoader{
+  position:fixed;inset:0;z-index:99999;display:grid;place-items:center;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(85,255,153,.16),transparent 28%),
+    radial-gradient(circle at 20% 80%,rgba(25,232,121,.07),transparent 32%),
+    #030208;
+  transition:opacity .8s ease,visibility .8s ease;
+}
+.startupLoader.isDone{opacity:0;visibility:hidden;pointer-events:none}
+.startupScene{width:230px;height:230px;position:relative;perspective:900px;display:grid;place-items:center}
+ .startupCard{
+  width:150px;height:200px;position:relative;transform-style:preserve-3d;
+  animation:startupFlip 2.8s cubic-bezier(.2,.7,.2,1) infinite;
+}
+.startupCardFace{
+  position:absolute;inset:0;border:1px solid rgba(215,200,255,.35);
+  border-radius:20px;backface-visibility:hidden;overflow:hidden;
+  background:linear-gradient(145deg,rgba(35,27,58,.96),rgba(6,6,14,.98));
+  box-shadow:0 0 55px rgba(132,91,255,.24),inset 0 0 45px rgba(255,255,255,.025);
+}
+.startupFront{padding:18px;display:flex;flex-direction:column;align-items:flex-start}
+.startupLogo{font-size:11px;letter-spacing:4px;font-weight:800}
+.startupTiny{margin-top:5px;font-size:6px;letter-spacing:2px;color:#918aa0}
+.startupMiniCube{
+  width:62px;height:62px;margin:auto;align-self:center;
+  border:1px solid rgba(231,224,255,.72);background:rgba(147,105,255,.10);
+  transform:rotateX(55deg) rotateZ(45deg);
+  box-shadow:0 0 35px rgba(142,100,255,.3);
+  animation:loaderCube 2.4s linear infinite;
+}
+.startupLoading{font-size:7px;letter-spacing:2px;color:#a99bbd}
+.startupBack{transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;font-size:8px;letter-spacing:2px;color:#a99bbd}
+.startupBack strong{font-size:18px;letter-spacing:4px;color:#fff}
+.startupOrbit{
+  position:absolute;width:250px;height:85px;border:1px solid rgba(174,145,255,.20);
+  border-radius:50%;transform:rotateX(67deg);animation:loaderOrbit 3.8s linear infinite;
+}
+.startupOrbit:after{content:"";position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 18px #fff;left:50%;top:-3px}
+.startupProgress{
+  position:absolute;left:50%;bottom:23%;transform:translateX(-50%);
+  width:min(260px,60vw);height:2px;background:rgba(255,255,255,.08);overflow:hidden;border-radius:9px;
+}
+.startupProgress i{display:block;width:38%;height:100%;background:linear-gradient(90deg,transparent,#a88cff,#fff,transparent);animation:startupProgress 2.1s ease-in-out infinite}
+.startupText{position:absolute;bottom:calc(23% - 25px);font-size:8px;letter-spacing:2px;color:#777080;text-transform:uppercase}
+@keyframes startupFlip{0%{transform:rotateY(0deg) rotateX(0deg) scale(.86)}35%{transform:rotateY(150deg) rotateX(10deg) scale(1)}70%{transform:rotateY(300deg) rotateX(-8deg) scale(.94)}100%{transform:rotateY(360deg) rotateX(0deg) scale(.86)}}
+@keyframes loaderCube{to{transform:rotateX(55deg) rotateZ(405deg)}}
+@keyframes loaderOrbit{to{transform:rotateX(67deg) rotateZ(360deg)}}
+@keyframes startupProgress{50%{transform:translateX(180%)}}
+@media(prefers-reduced-motion:reduce){.startupCard,.startupOrbit,.startupMiniCube,.startupProgress i{animation-duration:6s}}
+
+
+.linkHelper{margin:18px 0 4px;padding:14px 17px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:linear-gradient(120deg,rgba(148,112,255,.09),rgba(255,255,255,.025));box-shadow:inset 0 0 30px rgba(140,100,255,.03)}
+.linkHelper h3{font-size:14px;margin:5px 0}.linkHelper p{font-size:10px;color:#817b8a;margin:0}.linkHelper code{color:#c8baff;font-size:9px}
+
+
+.startupLoader{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#030208;transition:opacity .35s ease,visibility .35s ease}
+.startupLoader.done{opacity:0;visibility:hidden;pointer-events:none}
+.bootCard{width:145px;height:185px;position:relative;border:1px solid rgba(210,195,255,.4);border-radius:20px;background:linear-gradient(145deg,#21183a,#07070e);box-shadow:0 0 55px rgba(135,90,255,.25),inset 0 0 35px rgba(255,255,255,.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;animation:bootTurn 1.5s cubic-bezier(.35,.8,.25,1) both;transform-style:preserve-3d}
+.bootLogo{font-size:11px;font-weight:800;letter-spacing:4px}.bootText{font-size:7px;letter-spacing:2px;color:#958ba3}
+.bootCube{width:55px;height:55px;border:1px solid #ddd3ff99;background:#9870ff12;transform:rotateX(55deg) rotateZ(45deg);box-shadow:0 0 35px #8c62ff30;animation:bootCube 1.5s linear}
+@keyframes bootTurn{0%{transform:rotateY(0) scale(.82);opacity:0}20%{opacity:1}80%{transform:rotateY(270deg) scale(1)}100%{transform:rotateY(360deg) scale(1)}}
+@keyframes bootCube{to{transform:rotateX(55deg) rotateZ(405deg)}}
+
+
+.startupLoader::before,.startupLoader::after,.bootCard::before,.bootCard::after{content:none!important;display:none!important}
+.startupLoader{overflow:hidden}
+
+
+.startupLoader{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;gap:24px;transition:opacity .35s ease,visibility .35s ease}
+.startupLoader.done{opacity:0;visibility:hidden;pointer-events:none}
+.blankCard{width:150px;height:190px;background:#000;border:1px solid rgba(255,255,255,.08);border-radius:12px;animation:blankCardIn 1.5s ease both}
+.loadingLine{width:150px;height:2px;background:rgba(255,255,255,.10);overflow:hidden;border-radius:10px}
+.loadingLine i{display:block;width:35%;height:100%;background:#fff;animation:loadingSweep 1.5s ease-in-out both}
+@keyframes blankCardIn{0%{opacity:0;transform:scale(.88) rotateY(0)}20%{opacity:1}70%{transform:scale(1) rotateY(180deg)}100%{transform:scale(1) rotateY(360deg)}}
+@keyframes loadingSweep{0%{transform:translateX(-140%)}100%{transform:translateX(430%)}}
+.startupLoader::before,.startupLoader::after,.blankCard::before,.blankCard::after{content:none!important;display:none!important}
+
+
+.navExperience{border:0;background:none;color:#a7a3b1;font:inherit;font-size:11px;cursor:pointer;padding:0}.navExperience:hover{color:#fff}
+.experienceFrame{height:min(680px,72vh);min-height:420px;border:1px solid #a78bfa30;border-radius:22px;overflow:hidden;background:#020504;box-shadow:0 0 70px #a78bfa10}.experienceFrame iframe{width:100%;height:100%;border:0;display:block;background:#000}
+.experienceModal .experienceBox{max-width:900px}.experienceBox h3{font-size:32px;margin:8px 0}.experienceIntro{color:#9993a3;font-size:11px}
+
+.commentCornerBtn{position:absolute;right:22px;top:62px;border:1px solid #a78bfa55;background:#a78bfa10;color:#fff;border-radius:999px;padding:9px 14px;font-size:9px;letter-spacing:1px;cursor:pointer}.commentCornerBtn:hover{background:#a78bfa20;border-color:#a78bfa80}.commentFormHidden{display:none!important}.commentForm.commentFormVisible{display:grid!important}.experienceBox{position:relative}.commentList{max-height:360px;overflow:auto;padding-right:3px}@media(max-width:600px){.commentCornerBtn{right:16px;top:56px}.commentList{max-height:300px}}
+
+/* Cute green-site loading: pieces break apart, then join */
+.greenLoad{
+  position:absolute;inset:0;z-index:12;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 50%,#a78bfa18,transparent 48%),#020504;
+  transition:opacity .45s ease,visibility .45s ease;
+}
+.greenLoad.hide{opacity:0;visibility:hidden}
+.greenLoadCube{position:relative;width:86px;height:86px;transform-style:preserve-3d}
+.greenLoadPiece{
+  position:absolute;width:34px;height:34px;border:1px solid #ffffffaa;
+  background:linear-gradient(135deg,#fff,#d9ffea 18%,#a78bfa 48%,#312e81 72%,#0b0720);
+  box-shadow:0 0 24px #a78bfa40,inset 0 0 18px #fff4;
+  animation:greenJoin 1.45s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.greenLoadPiece:nth-child(1){left:0;top:0;animation-delay:.05s}
+.greenLoadPiece:nth-child(2){right:0;top:0;animation-delay:.12s}
+.greenLoadPiece:nth-child(3){left:0;bottom:0;animation-delay:.19s}
+.greenLoadPiece:nth-child(4){right:0;bottom:0;animation-delay:.26s}
+.greenLoadPiece:nth-child(5){left:26px;top:26px;animation-delay:.33s}
+@keyframes greenJoin{
+  0%{opacity:0;transform:translate3d(var(--x,-120px),var(--y,-80px),80px) rotate(120deg) scale(.25)}
+  55%{opacity:1;transform:translate3d(0,0,25px) rotate(18deg) scale(1.08)}
+  100%{opacity:1;transform:translate3d(0,0,0) rotate(0) scale(1)}
+}
+.greenLoadText{position:absolute;top:calc(50% + 62px);font-size:8px;letter-spacing:3px;color:#a78bfaaa}
+
+.greenLoadPiece:nth-child(1){--x:-170px;--y:-110px}
+.greenLoadPiece:nth-child(2){--x:170px;--y:-110px}
+.greenLoadPiece:nth-child(3){--x:-180px;--y:120px}
+.greenLoadPiece:nth-child(4){--x:180px;--y:120px}
+.greenLoadPiece:nth-child(5){--x:-130px;--y:15px}
+
+
+.futureSection{padding-top:40px}
+.futureGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}
+.futureItem{min-height:155px;padding:20px;border:1px solid #ffffff12;border-radius:18px;background:linear-gradient(145deg,#ffffff08,#ffffff02);display:flex;flex-direction:column;justify-content:space-between;transition:.35s}
+.futureItem:hover{transform:translateY(-6px);border-color:#a78bfa40;box-shadow:0 20px 60px #0007}
+.futureItem b{font-size:9px;color:#a78bfaaa;letter-spacing:2px}
+.futureItem strong{font-size:15px}
+.futureItem span{font-size:10px;line-height:1.7;color:#85808f}
+@media(max-width:800px){.futureGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.futureGrid{grid-template-columns:1fr}.futureItem{min-height:135px}}
+
+
+.previewTabs{display:flex;gap:7px;margin:0 0 10px;padding:4px;border:1px solid #ffffff10;background:#ffffff04;border-radius:999px;width:max-content}
+.previewTab{border:0;background:transparent;color:#77717f;border-radius:999px;padding:7px 14px;font:inherit;font-size:9px;font-weight:800;letter-spacing:.5px;cursor:pointer}
+.previewTab.active{background:#fff;color:#08070d}
+.codePanel{display:none;height:500px;margin:0 0 18px;padding:18px;border:1px solid #ffffff12;border-radius:16px;background:#030309;color:#b9ffcf;overflow:auto;text-align:left;white-space:pre-wrap;word-break:break-word;font:11px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace}
+.codePanel.show{display:block}
+.previewPanel.hide{display:none!important}
+@media(max-width:600px){.previewTabs{margin-bottom:7px}.previewTab{padding:6px 12px}.codePanel{height:55vh;font-size:9px}}
+
+</style>
+
+<style>
+#startupLoader{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483647!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:#000!important;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+#startupLoader .blankCard{
+  display:block!important;
+  width:220px!important;
+  height:140px!important;
+  position:relative!important;
+  border:1px solid #a78bfa66!important;
+  border-radius:22px!important;
+  background:
+    radial-gradient(circle at 72% 42%,#a78bfa55,transparent 22%),
+    linear-gradient(135deg,#21183a,#07070e 58%,#160f2b)!important;
+  box-shadow:0 0 35px #a78bfa28, inset 0 0 35px #a78bfa12!important;
+  transform-style:preserve-3d!important;
+  overflow:hidden!important;
+  animation:loginCardSpin 2.2s cubic-bezier(.2,.8,.2,1) forwards!important;
+}
+#startupLoader .blankCard:before{
+  content:'SQEZX3D';
+  position:absolute;
+  left:18px;top:18px;
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:2px;
+}
+#startupLoader .blankCard:after{
+  content:'';
+  position:absolute;
+  width:42px;height:42px;
+  right:22px;bottom:20px;
+  border:1px solid #a78bfaaa;
+  border-radius:12px;
+  background:linear-gradient(135deg,#fff,#a78bfa 45%,#24104a);
+  box-shadow:0 0 25px #a78bfa55;
+  transform:rotate(45deg);
+}
+@keyframes loginCardSpin{
+  0%{opacity:0;transform:perspective(900px) rotateY(-180deg) rotateX(18deg) scale(.65)}
+  18%{opacity:1}
+  48%{transform:perspective(900px) rotateY(360deg) rotateX(-8deg) scale(1)}
+  78%{transform:perspective(900px) rotateY(720deg) rotateX(8deg) scale(1.02)}
+  100%{opacity:0;transform:perspective(900px) rotateY(720deg) rotateX(0deg) scale(1.08)}
+}
+
+/* Service + premium UI */
+.serviceGrid,.pricingGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+.serviceCard,.priceCard{border:1px solid #ffffff14;border-radius:22px;padding:22px;background:linear-gradient(145deg,#ffffff0a,#ffffff02);position:relative;overflow:hidden;transition:.35s;transform-style:preserve-3d}
+.serviceCard:hover,.priceCard:hover{transform:translateY(-8px) rotateX(2deg) rotateY(-2deg);border-color:#b89cff45;box-shadow:0 25px 80px #000b}
+.serviceIcon{width:54px;height:54px;border:1px solid #ffffff18;border-radius:16px;display:grid;place-items:center;background:#ffffff08;font-size:22px;box-shadow:inset 0 0 25px #9b73ff18}
+.serviceCard h3,.priceCard h3{margin:20px 0 8px;font-size:20px}
+.serviceCard p,.priceCard li{font-size:11px;color:#96909f;line-height:1.7}
+.price{font-size:34px;font-weight:900;margin:15px 0}.price small{font-size:10px;color:#777}
+.priceCard ul{padding-left:18px;min-height:120px}.priceCard.featured{border-color:#a78bfa55;box-shadow:0 0 70px #825cff15}
+.priceCard .btn{display:inline-block;margin-top:8px;width:100%;text-align:center}
+.priceTag{position:absolute;right:16px;top:16px;font-size:8px;letter-spacing:1px;padding:6px 9px;border:1px solid #a78bfa33;border-radius:99px;color:#c4b5ff}
+.paymentNote{margin-top:16px;font-size:9px;color:#77717f;text-align:center}
+.legalBox{margin-top:35px;padding:20px;border:1px solid #ffffff12;border-radius:18px;background:#ffffff04;font-size:10px;color:#817b8a;line-height:1.8}
+.legalBox strong{color:#c9c0d4}
+.copyrightModal .modalBox{max-width:720px}
+@media(max-width:800px){.serviceGrid,.pricingGrid{grid-template-columns:1fr}.serviceCard,.priceCard{padding:19px}}
+
+/* Refined premium trigger + 3D library */
+.navPremium,.footerCopyright{border:0;background:transparent;color:#a7a3b1;font:inherit;font-size:11px;cursor:pointer;padding:0}
+.navFuture{border:0;background:transparent;color:#a7a3b1;font:inherit;font-size:11px;cursor:pointer;padding:0}.navFuture:hover{color:#fff}
+.navPremium:hover,.footerCopyright:hover{color:#fff}
+.premiumPanel{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.78);backdrop-filter:blur(18px);display:none;place-items:center;padding:18px;perspective:1400px}
+.premiumPanel.show{display:grid}
+.premiumBox{width:min(1060px,100%);max-height:min(820px,92vh);overflow:auto;border:1px solid #ffffff18;border-radius:28px;padding:30px;background:linear-gradient(145deg,#100b1c,#05050b 72%);box-shadow:0 50px 150px #000;transform-style:preserve-3d;animation:premiumIn .55s cubic-bezier(.2,.8,.2,1)}
+.premiumBox:before{content:"";position:absolute;width:320px;height:320px;right:-90px;top:-120px;border-radius:50%;background:radial-gradient(circle,#8e68ff28,transparent 68%);filter:blur(12px);pointer-events:none}
+.premiumBox h2{font-size:clamp(42px,6vw,70px);letter-spacing:-5px;line-height:.9;margin:12px 0}
+.premiumBox>p{color:#9993a3;font-size:12px;line-height:1.7}
+.premiumClose{position:absolute;right:15px;top:13px;width:38px;height:38px;border:1px solid #ffffff18;border-radius:50%;background:#ffffff08;color:#fff;cursor:pointer;z-index:4}
+@keyframes premiumIn{from{opacity:0;transform:translateY(25px) rotateX(7deg) scale(.96)}to{opacity:1;transform:none}}
+.websiteCard{perspective:1000px;transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .45s,box-shadow .45s}
+.websiteCard:hover{transform:translateY(-12px) rotateX(5deg) rotateY(-4deg) scale(1.015);box-shadow:0 30px 90px #000b,0 0 45px #805dff12}
+.websiteCard:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 25%,#ffffff0a 48%,transparent 67%);transform:translateX(-120%);transition:transform .8s ease;pointer-events:none}
+.websiteCard:hover:after{transform:translateX(120%)}
+.cardGrid{grid-template-columns:repeat(3,1fr)!important;gap:16px!important}
+@media(max-width:1000px){.cardGrid{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:700px){.navlinks{gap:11px;font-size:9px}.navlinks a:nth-child(2){display:none}.navlinks a:nth-child(4){display:none}.cardGrid{grid-template-columns:1fr!important}.premiumBox{padding:22px 15px}.pricingGrid{grid-template-columns:1fr!important}.priceCard ul{min-height:auto}.websiteCard{min-height:310px!important}}
+
+.websiteCard:first-child .cardScene{min-height:260px}
+.websiteCard:first-child .cardScene:before{content:"VIDEO PREVIEW READY";position:absolute;left:16px;top:15px;z-index:5;font-size:8px;letter-spacing:2px;color:#a78bfaaa}
+.websiteCard:first-child .cardScene:after{content:"Add your video here";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;letter-spacing:1px;color:#ffffff55;z-index:4}
+.cardActions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.downloadBtn,.previewBtn{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 11px;border-radius:99px;border:1px solid #ffffff18;background:#ffffff06;color:#aaa;text-decoration:none;font-size:8px;letter-spacing:.5px;cursor:pointer;transition:.3s}
+.downloadBtn:hover,.previewBtn:hover{color:#fff;border-color:#a78bfa80;background:#a78bfa10;transform:translateY(-2px)}
+.downloadBtn{border-color:#a78bfa45;color:#b9ffd5}
+@media(max-width:700px){.websiteCard:first-child .cardScene{min-height:300px}.cardActions{width:100%}}
+/* Supplied green cube — heavy 3D treatment */
+.greenCubeScene{background:radial-gradient(circle at 50% 50%,#a78bfa20,transparent 44%),#020504;perspective:1200px}
+.cubeHalo{position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#a78bfa38,transparent 68%);filter:blur(14px);animation:greenHalo 3.5s ease-in-out infinite}
+@keyframes greenHalo{50%{transform:translate(-50%,-50%) scale(1.2);opacity:.7}}
+.cubeRing{position:absolute;left:50%;top:50%;border:1px solid #a78bfa50;border-radius:50%;transform-style:preserve-3d}
+.cr1{width:270px;height:82px;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(12deg);animation:greenRing1 8s linear infinite}
+.cr2{width:200px;height:62px;border-color:#fff2;transform:translate(-50%,-50%) rotateX(70deg) rotateY(25deg);animation:greenRing2 6s linear infinite reverse}
+@keyframes greenRing1{to{transform:translate(-50%,-50%) rotateX(70deg) rotateZ(372deg)}}
+@keyframes greenRing2{to{transform:translate(-50%,-50%) rotateX(70deg) rotateY(25deg) rotateZ(-360deg)}}
+.greenCube{position:absolute;left:50%;top:50%;width:118px;height:118px;transform:translate(-50%,-50%) rotateX(-18deg) rotateY(25deg);transform-style:preserve-3d;animation:greenCubeFloat 5s ease-in-out infinite;filter:drop-shadow(0 0 28px #a78bfa50)}
+@keyframes greenCubeFloat{50%{transform:translate(-50%,-55%) rotateX(18deg) rotateY(205deg) scale(1.06)}}
+.gcFace{position:absolute;inset:0;border:1px solid #fff9;background:linear-gradient(135deg,#fff,#d9ffea 15%,#a78bfa 43%,#312e81 70%,#0b0720);box-shadow:inset 0 0 28px #fff4,0 0 30px #a78bfa30}
+.gcFront{transform:translateZ(59px)}.gcBack{transform:translateZ(-59px) rotateY(180deg)}.gcRight{transform:rotateY(90deg) translateZ(59px)}.gcLeft{transform:rotateY(-90deg) translateZ(59px)}.gcTop{transform:rotateX(90deg) translateZ(59px)}.gcBottom{transform:rotateX(-90deg) translateZ(59px)}
+.gcCore{position:absolute;left:50%;top:50%;width:50px;height:50px;transform:translate(-50%,-50%) translateZ(70px);border:1px solid #fff;border-radius:9px;background:linear-gradient(135deg,#fff,#a78bfa 45%,#4c1d95 72%,#0b0720);box-shadow:0 0 30px #a78bfa,0 0 80px #a78bfa55;display:grid;place-items:center}
+.gcCore span{width:22px;height:22px;background:#fff;transform:rotate(45deg);box-shadow:0 0 16px #fff}
+.cubeParticle{position:absolute;width:4px;height:4px;border-radius:50%;background:#a78bfa;box-shadow:0 0 12px #a78bfa,0 0 25px #a78bfa77}
+.cp1{left:18%;top:22%;animation:cp1 4s infinite}.cp2{right:16%;top:25%;animation:cp2 5s infinite}.cp3{left:23%;bottom:18%;animation:cp3 4.5s infinite}.cp4{right:20%;bottom:20%;animation:cp4 6s infinite}
+@keyframes cp1{50%{transform:translate(28px,-25px);opacity:.3}}@keyframes cp2{50%{transform:translate(-25px,25px);opacity:.4}}@keyframes cp3{50%{transform:translate(30px,-20px);opacity:.35}}@keyframes cp4{50%{transform:translate(-30px,-25px);opacity:.35}}
+.navCopyright{border:0!important;background:transparent!important;color:#a7a3b1!important;padding:0!important;cursor:pointer}
+.miniPreview{padding:8px 12px!important}
+.featureAutoOpen{cursor:pointer;transform-style:preserve-3d}
+.featureAutoOpen .autoOpen{font-size:9px;letter-spacing:1.5px;color:#a78bfaaa;transition:.3s}
+.featureAutoOpen:hover .autoOpen{color:#a78bfa;transform:translateX(4px)}
+</style>
+
+<style>
+.commentsBox{margin-top:20px;padding:28px;border:1px solid #ffffff14;border-radius:24px;background:linear-gradient(145deg,#ffffff08,#ffffff02);box-shadow:0 20px 80px #0007}.commentsHead h3{font-size:28px;margin:8px 0}.commentsHead p{font-size:11px;color:#85808f;margin:0;line-height:1.6}.commentList{display:grid;gap:12px;margin:24px 0}.commentItem{padding:15px 16px;border:1px solid #ffffff10;border-radius:15px;background:#ffffff04}.commentItem strong{font-size:11px}.commentItem time{float:right;font-size:8px;color:#66616d}.commentItem p{margin:8px 0 0;font-size:11px;color:#aaa5b5;line-height:1.7;white-space:pre-wrap;word-break:break-word}.commentForm{display:grid;grid-template-columns:180px 1fr auto;gap:9px}.commentInput{width:100%;border:1px solid #ffffff14;background:#05040b;color:#fff;border-radius:12px;padding:12px;font:inherit;font-size:10px;outline:none}.commentForm textarea{min-height:45px;resize:vertical}.commentNote{font-size:8px;color:#625e6b;margin-top:10px}.paymentAccounts{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.paymentAccount{width:100%}@media(max-width:700px){.commentForm{grid-template-columns:1fr}.commentForm .btn{width:100%}.paymentAccounts{grid-template-columns:1fr}.directPreview{height:135px}.websiteCard:first-child .cardContent h3{margin-top:170px!important}}
+</style>
+
+<style>
+/* Final live preview sizing */
+.experiencePreview{min-height:330px}
+.websiteCard:first-child .cardScene{min-height:330px;overflow:hidden}
+.websiteCard:first-child .cardContent h3{margin-top:28px}
+.websiteCard:first-child .cardScene:before,.websiteCard:first-child .cardScene:after{display:none}
+.cardLiveView{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;background:#05040b;opacity:.92}
+.cardLiveShade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,#05040bd9 100%);z-index:2;pointer-events:none}
+.liveModalPreview{height:500px!important;margin:-28px -28px 20px!important;background:#05040b!important;display:block!important;overflow:hidden!important;border-radius:18px!important}
+.liveModalPreview iframe{width:100%;height:100%;border:0;display:block;background:#05040b}
+.previewActions{display:flex!important;gap:8px!important;justify-content:flex-start!important;margin-top:18px!important}
+.previewActions .btn{min-width:125px}
+.modalBox{width:min(760px,100%)!important;padding:24px!important;border-radius:22px!important}
+.modalBox .modalPreview{margin:-24px -24px 20px!important}
+.modalBox h3{font-size:25px!important;margin:6px 0!important}
+.modalBox p{font-size:11px!important}
+
+/* LARGE COMPUTER-STYLE WEBSITE PREVIEW */
+#modal .modalBox{
+  width:98vw!important;
+  max-width:1600px!important;
+  height:96vh!important;
+  max-height:96vh!important;
+  padding:12px!important;
+  border-radius:24px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+#modal .previewTabs{
+  flex:0 0 auto!important;
+  z-index:20!important;
+  margin:0 0 10px!important;
+  padding:4px!important;
+  width:max-content!important;
+}
+#modal .liveModalPreview{
+  flex:1 1 auto!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0 0 12px!important;
+  border-radius:18px!important;
+  overflow:auto!important;
+  background:#05040b!important;
+  display:block!important;
+  position:relative!important;
+}
+#modal .liveModalPreview iframe{
+  width:1280px!important;
+  height:800px!important;
+  min-width:1280px!important;
+  min-height:800px!important;
+  border:0!important;
+  display:block!important;
+  background:#05040b!important;
+  transform-origin:top left!important;
+}
+#modal .codePanel{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  margin:0 0 12px!important;
+  padding:22px!important;
+  border:1px solid #ffffff12!important;
+  border-radius:16px!important;
+  background:#020107!important;
+  color:#d8d4e2!important;
+  font:12px/1.65 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace!important;
+  white-space:pre!important;
+  overflow:auto!important;
+  text-align:left!important;
+  tab-size:2!important;
+}
+#modal .codePanel.show{display:block!important}
+#modal .kicker,
+#modal #modalTitle,
+#modal #modalText,
+#modal .modalInfo{
+  flex:0 0 auto;
+}
+#modal .previewActions{
+  flex:0 0 auto!important;
+  margin-top:10px!important;
+}
+
+.codeToolbar{display:none;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px;padding:8px 2px;color:#6f6a79;font-size:9px;letter-spacing:2px}.codeToolbar .btn{min-width:120px}.codeToolbar.show{display:flex}@media(max-width:600px){.codeToolbar{font-size:8px}.codeToolbar .btn{min-width:105px}}
+.paymentMethods{display:flex;gap:8px;margin-top:16px}.paymentMethods .btn{flex:1}
+.commentItem{position:relative;padding-right:92px}.commentItem time{position:absolute;right:14px;top:14px;float:none}
+@media(max-width:600px){
+  .modal{padding:6px}
+  #modal .modalBox{
+    width:99vw!important;
+    height:96vh!important;
+    max-height:96vh!important;
+    padding:8px!important;
+    border-radius:18px!important;
+  }
+  #modal .liveModalPreview{
+    margin:0 0 8px!important;
+    border-radius:14px!important;
+  }
+  #modal .liveModalPreview iframe{
+    width:1280px!important;
+    height:800px!important;
+    min-width:1280px!important;
+    min-height:800px!important;
+  }
+  #modal .codePanel{
+    font-size:11px!important;
+    line-height:1.55!important;
+    padding:16px!important;
+  }
+  #modal .kicker{font-size:7px!important}
+  #modal #modalTitle{font-size:18px!important}
+  #modal #modalText{font-size:9px!important;margin:3px 0!important}
+  #modal .modalInfo{font-size:8px!important;padding:8px!important;margin-top:5px!important}
+  #modal .previewActions{margin-top:7px!important}
+  .previewActions .btn{min-width:0;flex:1}
+  .websiteCard:first-child .cardScene{min-height:320px!important}
+}
+
+/* FINAL PREVIEW + SOCIAL FOOTER */
+.websiteCard:first-child .cardLiveView{
+  width:160%;
+  height:160%;
+  transform:scale(.625);
+  transform-origin:top left;
+}
+.websiteCard:first-child .cardLiveShade{
+  background:linear-gradient(180deg,transparent 55%,#05040bd9 100%);
+}
+.socialFooter{padding:24px 0 8px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.socialBtn{display:inline-flex;align-items:center;justify-content:center;min-width:105px;height:38px;padding:0 18px;border-radius:22px;border:1px solid #ffffff18;background:#ffffff06;color:#aaa5b5;text-decoration:none;font-size:10px;font-weight:700;letter-spacing:1px;transition:.25s}
+.socialBtn:hover{color:#fff;border-color:#a78bfa55;background:#a78bfa10;transform:translateY(-2px);box-shadow:0 10px 30px #a78bfa12}
+.socialIcons{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:4px;padding-bottom:18px}.socialIcon{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ffffff18;background:#ffffff06;color:#a9b0ad;border-radius:50%;text-decoration:none;transition:.25s}.socialIcon svg{width:15px;height:15px;fill:currentColor}.socialIcon:hover{color:#fff;border-color:#a78bfa70;background:#a78bfa12;transform:translateY(-2px);box-shadow:0 8px 24px #a78bfa18}
+@media(max-width:600px){.websiteCard:first-child .cardScene{min-height:300px!important}.websiteCard:first-child .cardLiveView{width:150%;height:150%;transform:scale(.6667);transform-origin:top left}.socialFooter{padding-bottom:18px}}
+</style>
+
+<style>
+/* Future opens only as a modal */
+.futureModalBox{width:min(860px,94vw)!important;max-height:88vh!important;overflow:auto!important;padding:28px!important}
+.futureModalBox h3{font-size:34px;margin:7px 0}
+.futureModalBox>.futureGrid{margin-top:22px}
+/* 16:9 live preview */
+#modal .liveModalPreview{aspect-ratio:16/9!important;height:auto!important;min-height:0!important}
+#modal .liveModalPreview iframe{width:1280px!important;height:720px!important}
+
+/* Download Code placement */
+.cardCodeDownload{margin-top:12px;display:inline-flex;align-items:center;justify-content:center}
+.modalCodeDownload{margin:4px 0 8px;display:inline-flex}
+.startupCardFace{border-color:#a78bfa70!important;background:linear-gradient(145deg,#a78bfa30,#07150d 55%,#020504)!important;box-shadow:inset 0 0 35px #a78bfa20,0 0 40px #a78bfa20!important}
+</style>
+<style>
+/* FINAL15: first library card is preview-only */
+.websiteOnlyCard{padding:0!important;min-height:330px!important;border-radius:20px!important;overflow:hidden!important;cursor:pointer!important}
+.websiteOnlyCard .cardScene{position:absolute!important;inset:0!important;min-height:100%!important;height:100%!important}
+.websiteOnlyCard .cardLiveView{pointer-events:none!important}
+.websiteOnlyCard:before,.websiteOnlyCard:after{display:none!important}
+.websiteOnlyCard:focus-visible{outline:1px solid #a78bfa99;outline-offset:3px}
+/* Open preview panel: square corners as requested */
+#modal .modalBox{border-radius:0!important}
+#modal .liveModalPreview{border-radius:0!important}
+#modal .codePanel{border-radius:0!important}
+@media(max-width:600px){.websiteOnlyCard{min-height:300px!important}.websiteOnlyCard .cardScene{min-height:100%!important}}
+</style>
+</head>
+<body>
+
+<div id="startupLoader" class="startupLoader">
+  <div class="blankCard"></div>
+  <div class="loadingLine"><i></i></div>
+</div>
+
+
+
+
+
+
+
+<header class="nav"><div class="wrap navin">
+<a class="logo" href="#">SQEZX<span>3D</span></a>
+<nav class="navlinks"><a href="#library">Library</a><button class="navFuture" id="futureOpen" type="button">Future</button><button class="navExperience" id="experienceOpen" type="button">Experience</button><button class="footerCopyright navCopyright" id="copyrightNavOpen" type="button">Copyright</button><button class="navPremium" id="premiumOpen" type="button">Premium</button></nav>
+<a class="navbtn" href="#library">Explore</a>
+</div></header>
+
+<main>
+<section class="hero">
+<div class="wrap heroGrid">
+<div class="reveal slideL">
+<div class="kicker">Original 3D Web Library</div>
+<h1><span class="gradient">Immersive.</span><br>Fluid. 3D.</h1>
+<p>Build modern web experiences with cinematic depth, floating geometry, soft neon light and scroll-driven motion. Everything here is an original demo concept.</p>
+<div class="actions"><a class="btn primary" href="#library">Explore Concepts</a><a class="btn" href="#story">See Motion</a></div>
+</div>
+<div class="heroVisual reveal slideR" id="heroVisual">
+<div class="scene" id="scene"><div class="halo"></div><div class="orbit o1"></div><div class="orbit o2"></div><div class="orbit o3"></div>
+<div class="object" id="object"><div class="objFace obj1"></div><div class="objFace obj2"></div><div class="objFace obj3"></div><div class="objFace obj4"></div><div class="objFace obj5"></div><div class="objFace obj6"></div><div class="core"></div></div></div>
+<span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
+</div>
+</div>
+</section>
+
+<section class="section" id="features"><div class="wrap">
+<div class="reveal"><div class="kicker">Designed for motion</div><h2 class="sectionTitle">Depth that<br><span class="gradient">moves.</span></h2><p class="muted">The layout uses the same broad visual language you referenced—dark space, luminous 3D objects, floating cards and long-form storytelling—but the implementation, colors, copy and shapes are original.</p></div>
+<div class="cards">
+<article class="card reveal featureAutoOpen" data-feature-url="https://istaqf.github.io/3D-experiences/" tabindex="0" role="link"><div class="cardNo">01 / VISUAL</div><h3>Layered Depth</h3><p>Multiple planes, glow fields and perspective create a strong sense of space without using copied assets.</p><div class="cardFoot"><span class="badge">3D</span><span class="autoOpen">OPEN →</span></div></article>
+<article class="card reveal featureAutoOpen" data-feature-url="https://istaqf.github.io/3D-experiences/" tabindex="0" role="link"><div class="cardNo">02 / MOTION</div><h3>Scroll Choreography</h3><p>Sections reveal, shift and transform as they enter the viewport for a cinematic scrollytelling feel.</p><div class="cardFoot"><span class="badge">MOTION</span><span class="autoOpen">OPEN →</span></div></article>
+<article class="card reveal featureAutoOpen" data-feature-url="https://istaqf.github.io/3D-experiences/" tabindex="0" role="link"><div class="cardNo">03 / UI</div><h3>Floating Panels</h3><p>Soft glass panels sit over the dark scene with subtle highlights, hover depth and clean controls.</p><div class="cardFoot"><span class="badge">UI</span><span class="autoOpen">OPEN →</span></div></article>
+</div>
+</div></section>
+
+<section class="section" id="story"><div class="wrap story">
+<div class="storyVisual reveal slideL"><div class="floatingShape"></div><div class="shape2"></div></div>
+<div class="reveal slideR"><div class="kicker">How it moves</div><h2 class="sectionTitle">Objects follow<br>the <span class="gradient">story.</span></h2><p class="muted">Scroll down and the scene changes gradually: the central geometry rotates, the light shifts, and each section arrives with its own depth. Scroll back up and the motion reverses naturally.</p><div class="actions"><a class="btn primary" href="#library">Browse Library</a></div></div>
+</div></section>
+
+<div class="modal experienceModal" id="experienceModal" aria-hidden="true">
+  <div class="modalBox experienceBox">
+    <button class="close" id="experienceClose" type="button">×</button>
+    <div class="kicker">COMMUNITY EXPERIENCE</div>
+    <h3>What people say.</h3>
+    <p class="experienceIntro">Read comments and leave your own experience.</p>
+    <div class="commentList" id="commentList"></div>
+    <button class="commentCornerBtn" id="openCommentForm" type="button">Comment</button>
+    <form class="commentForm commentFormHidden" id="commentForm">
+      <input class="commentInput" id="commentName" maxlength="40" placeholder="Your name" required>
+      <textarea class="commentInput" id="commentText" maxlength="500" placeholder="Write a comment..." required></textarea>
+      <button class="btn primary" type="submit">Post Comment</button>
+    </form>
+    <div class="commentNote">Comments are saved in this browser.</div>
+  </div>
+</div>
+
+<div class="premiumPanel" id="premiumPanel" aria-hidden="true">
+  <div class="premiumBox">
+    <button class="premiumClose" id="premiumClose" aria-label="Close premium">×</button>
+    <div class="kicker">PREMIUM</div>
+    <h2>Pick your <span class="gradient">level.</span></h2>
+    <p>Choose a plan. Payment integration is ready to be connected later.</p>
+    <div class="pricingGrid">
+      <article class="priceCard">
+        <span class="priceTag">FREE</span><h3>Free</h3>
+        <div class="price">$0 <small>/ forever</small></div>
+        <ul><li>Free 3D websites</li><li>Basic previews</li><li>Copy website link</li><li>Personal projects</li></ul>
+        <button class="btn" type="button" data-premium-close>Use Free</button>
+      </article>
+      <article class="priceCard featured">
+        <span class="priceTag">POPULAR</span><h3>Monthly</h3>
+        <div class="price">$19 <small>/ month</small></div>
+        <ul><li>Premium website library</li><li>Advanced 3D previews</li><li>More premium concepts</li><li>Priority feature access</li></ul>
+        <button class="btn primary payBtn" type="button" data-plan="Monthly — $19/month">Continue to Payment</button>
+      </article>
+      <article class="priceCard">
+        <span class="priceTag">BEST VALUE</span><h3>Yearly</h3>
+        <div class="price">$99 <small>/ year</small></div>
+        <ul><li>Everything in Monthly</li><li>Full-year premium access</li><li>Advanced 3D concepts</li><li>Priority feature access</li></ul>
+        <button class="btn primary payBtn" type="button" data-plan="Yearly — $99/year">Continue to Payment</button>
+      </article>
+    </div>
+    <div class="paymentNote">No payment is processed until your payment provider is connected.</div>
+  </div>
+</div>
+
+<section class="section futureSection" id="future" style="display:none!important">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">WHAT'S COMING NEXT</div>
+      <h2 class="sectionTitle">The <span class="gradient">Future.</span></h2>
+      <p class="muted">New free 3D websites will be added regularly. The library keeps growing with fresh concepts and ready-to-preview code.</p>
+    </div>
+    <div class="futureGrid">
+      <div class="futureItem"><b>01</b><strong>New free websites</strong><span>Fresh 3D experiences will be added regularly.</span></div>
+      <div class="futureItem"><b>02</b><strong>Daily-style drops</strong><span>More small, original concepts as the library grows.</span></div>
+      <div class="futureItem"><b>03</b><strong>Live preview</strong><span>Open each website before downloading it.</span></div>
+      <div class="futureItem"><b>04</b><strong>HTML code download</strong><span>Download the supplied experience as an HTML file.</span></div>
+      <div class="futureItem"><b>05</b><strong>3D motion updates</strong><span>More cinematic objects, particles, cubes and scroll motion.</span></div>
+      <div class="futureItem"><b>06</b><strong>Community experience</strong><span>Experience comments and new community features can grow here.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="library"><div class="wrap">
+<div class="reveal"><div class="kicker">FREE 3D WEBSITE LIBRARY</div><h2 class="sectionTitle">Choose a<br><span class="gradient">website.</span></h2><p class="muted">17 free 3D website experiences. Tap a website to preview it live, copy its link, or download its HTML file when available.</p></div><div class="cardGrid">
+<article class="card websiteCard reveal websiteOnlyCard" data-title="3D Website" data-desc="Your supplied futuristic violet 3D interface" data-url="local-neon-core" data-download="embedded" aria-label="Open 3D website preview" tabindex="0">
+  <div class="cardScene greenCubeScene"><div class="greenLoad" id="greenLoader"><div class="greenLoadCube"><i class="greenLoadPiece"></i><i class="greenLoadPiece"></i><i class="greenLoadPiece"></i><i class="greenLoadPiece"></i><i class="greenLoadPiece"></i></div><div class="greenLoadText">BUILDING EXPERIENCE</div></div><iframe class="cardLiveView" title="3D website live view" loading="lazy" srcdoc=""></iframe><div class="cardLiveShade"></div></div>
+</article>
+<article class="card websiteCard reveal" data-title="Prism Flow" data-desc="Glass-inspired geometric world" data-url="https://istaqf.github.io/3D-experiences/" data-download="generated">
+  <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+  <div class="cardContent"><div class="cardNo">02 / FREE</div><h3>Prism Flow</h3><p>Glass-inspired geometric world</p></div>
+  <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview ↗</button></div></div>
+</article>
+<article class="card websiteCard reveal" data-title="Obsidian Motion" data-desc="Dark cinematic sculptural scene" data-url="https://istaqf.github.io/3D-experiences/" data-download="generated">
+  <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+  <div class="cardContent"><div class="cardNo">03 / FREE</div><h3>Obsidian Motion</h3><p>Dark cinematic sculptural scene</p></div>
+  <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview ↗</button></div></div>
+</article>
+<article class="card websiteCard reveal" data-title="Aether Grid" data-desc="Futuristic responsive grid" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_4" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">04 / FREE</div><h3>Aether Grid</h3><p>Futuristic responsive grid</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Crystal Pulse" data-desc="Glowing core and orbiting geometry" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_5" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">05 / FREE</div><h3>Crystal Pulse</h3><p>Glowing core and orbiting geometry</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Void Studio" data-desc="Minimal black canvas" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_6" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">06 / FREE</div><h3>Void Studio</h3><p>Minimal black canvas</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Orbit Foundry" data-desc="Metallic product presentation" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_7" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">07 / FREE</div><h3>Orbit Foundry</h3><p>Metallic product presentation</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Lumen Stage" data-desc="Soft neon presentation stage" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_8" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">08 / FREE</div><h3>Lumen Stage</h3><p>Soft neon presentation stage</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Vector Bloom" data-desc="Abstract unfolding 3D petals" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_9" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">09 / FREE</div><h3>Vector Bloom</h3><p>Abstract unfolding 3D petals</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Quantum Frame" data-desc="Floating spatial UI surfaces" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_10" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">10 / FREE</div><h3>Quantum Frame</h3><p>Floating spatial UI surfaces</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Noir Gallery" data-desc="Dark cinematic gallery" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_11" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">11 / FREE</div><h3>Noir Gallery</h3><p>Dark cinematic gallery</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Infinite Form" data-desc="Sculptural scroll experience" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_12" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">12 / FREE</div><h3>Infinite Form</h3><p>Sculptural scroll experience</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Neon Arc" data-desc="Curved neon spatial interface" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_13" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">13 / FREE</div><h3>Neon Arc</h3><p>Curved neon spatial interface</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Hyper Glass" data-desc="Layered glass depth system" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_14" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">14 / FREE</div><h3>Hyper Glass</h3><p>Layered glass depth system</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Gravity Room" data-desc="Floating objects in deep space" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_15" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">15 / FREE</div><h3>Gravity Room</h3><p>Floating objects in deep space</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Pulse Matrix" data-desc="Reactive neon geometry" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_16" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">16 / FREE</div><h3>Pulse Matrix</h3><p>Reactive neon geometry</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+<article class="card websiteCard reveal" data-title="Zero Point" data-desc="Minimal cinematic 3D portal" data-url="PASTE_YOUR_PUBLIC_WEBSITE_LINK_17" data-download="generated">
+      <div class="cardScene"><div class="cardGlow"></div><div class="miniShape"></div><div class="miniOrbit"></div><span class="miniDot"></span></div>
+      <div class="cardContent"><div class="cardNo">17 / FREE</div><h3>Zero Point</h3><p>Minimal cinematic 3D portal</p></div>
+      <div class="cardFoot"><span class="badge">FREE</span><div class="cardActions"><button class="previewBtn" type="button">Preview</button></div></div>
+    </article>
+</div></div></section>
+</main>
+
+<footer class="footer">
+  <div class="wrap foot">
+    <span>© <span id="year"></span> SQEZX3D</span>
+    <span><button class="footerCopyright" id="copyrightOpen" type="button">Copyright & Licensing</button></span>
+    <span class="legalFoot">Use only content you own or are licensed to use.</span>
+  </div>
+  <div class="wrap socialIcons" aria-label="Social links">
+    <a class="socialIcon" id="facebookLink" href="#" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.8V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7.2v3h2.8v8h3.5z"/></svg>
+    </a>
+    <a class="socialIcon" id="instagramLink" href="#" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.5 6.2a1.2 1.2 0 1 1-1.2 1.2 1.2 1.2 0 0 1 1.2-1.2z"/></svg>
+    </a>
+  </div>
+</footer>
+
+
+<div class="modal copyrightModal" id="copyrightModal" aria-hidden="true">
+  <div class="modalBox">
+    <button class="close" id="copyrightClose">×</button>
+    <div class="kicker">COPYRIGHT & LICENSING</div>
+    <h3>Use responsibly.</h3>
+    <p>This library is an independent project. SQEZX3D does not claim ownership of third-party websites or assets. Only publish or redistribute material when you have the necessary rights or a license that permits your intended use.</p>
+    <div class="legalBox">
+      <strong>Before publishing:</strong><br>
+      1. Open the original source page.<br>
+      2. Check the exact asset's current license.<br>
+      3. Follow attribution requirements when required.<br>
+      4. Do not remove another creator's copyright notice.<br>
+      5. Keep a record of the license and source for commercial projects.
+    </div>
+    <div class="legalBox"><strong>Rights & takedown:</strong><br>Use only original, public-domain, or properly licensed assets. If a rights holder believes material is used incorrectly, contact the site owner and remove or replace the disputed material while the license is reviewed.</div>
+    <div class="actions">
+      <a class="btn primary" href="#copyrightInfo" id="copyrightServices">View Policy</a>
+      <button class="btn" id="copyrightClose2">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="futureModal" aria-hidden="true">
+  <div class="modalBox futureModalBox">
+    <button class="close" id="futureClose" type="button">×</button>
+    <div class="kicker">WHAT'S COMING NEXT</div>
+    <h3>The <span class="gradient">Future.</span></h3>
+    <p>New free 3D websites and fresh features will be added regularly.</p>
+    <div class="futureGrid">
+      <div class="futureItem"><b>01</b><strong>New free websites</strong><span>Fresh original 3D experiences will be added regularly.</span></div>
+      <div class="futureItem"><b>02</b><strong>Daily drops</strong><span>New concepts and experiments will keep arriving.</span></div>
+      <div class="futureItem"><b>03</b><strong>Live 16:9 preview</strong><span>Open a website in a separate page and see the full experience.</span></div>
+      <div class="futureItem"><b>04</b><strong>HTML code download</strong><span>Download the website code as a standalone HTML file.</span></div>
+      <div class="futureItem"><b>05</b><strong>More 3D motion</strong><span>More cubes, particles, depth and scroll animations.</span></div>
+      <div class="futureItem"><b>06</b><strong>Community features</strong><span>More comments and community tools can be added over time.</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="paymentModal" aria-hidden="true">
+  <div class="modalBox">
+    <button class="close" id="paymentClose" type="button">×</button>
+    <div class="kicker">PAYMENT</div>
+    <h3 id="paymentTitle">Payment Options</h3>
+    <p>Select a payment method, then select your payment account.</p>
+    <div class="paymentMethods">
+      <button class="btn primary paymentMethod selected" type="button" data-method="PhonePe">PhonePe</button>
+      <button class="btn paymentMethod" type="button" data-method="UPI">UPI</button>
+    </div>
+    <div class="paymentNote" id="paymentAccountNote">Select PhonePe or UPI. Your payment account/link can be connected later.</div>
+  </div>
+</div>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modalBox">
+    <button class="close" id="close" type="button">×</button>
+    <div class="previewTabs" role="tablist" aria-label="Experience view">
+  <button class="previewTab active" id="tabPreview" type="button">Preview</button>
+  <button class="previewTab" id="tabCode" type="button">Code Preview</button>
+</div>
+<div class="modalPreview liveModalPreview" id="previewPanel"><iframe id="modalFrame" title="Website live preview" loading="lazy"></iframe></div>
+<div class="codeToolbar" id="codeToolbar"><span>HTML SOURCE CODE</span><button class="btn primary" id="codeDownloadTop" type="button">Download Code</button></div>
+<pre class="codePanel" id="codePanel" aria-hidden="true"></pre>
+    <div class="kicker">INTERACTIVE 3D PREVIEW</div>
+    <h3 id="modalTitle">Preview</h3>
+    <button class="btn primary modalCodeDownload" id="modalCodeDownload" type="button">Download Code</button>
+    <p id="modalText">An original SQEZX3D concept.</p>
+    <div class="modalInfo"><strong>How to use:</strong><br>View the live experience above, copy its link, or download this experience as an HTML file.</div>
+    <div class="actions previewActions">
+      <button class="btn" id="modalCopy" type="button">Copy Link</button>
+      <button class="btn primary" id="modalDownload" type="button">Download HTML File</button>
+    </div>
+    <div class="copyStatus" id="copyStatus"></div>
+  </div>
+</div>
+
+<script>
+const scene=document.getElementById("scene"),hero=document.getElementById("heroVisual");let targetX=0,targetY=0,curX=0,curY=0;
+addEventListener("mousemove",e=>{if(innerWidth<800)return;targetX=(e.clientX/innerWidth-.5)*10;targetY=(e.clientY/innerHeight-.5)*8});
+function animatePointer(){curX+=(targetX-curX)*.06;curY+=(targetY-curY)*.06;if(scene)scene.style.transform=`rotateX(${-curY}deg) rotateY(${curX}deg)`;requestAnimationFrame(animatePointer)}animatePointer();
+addEventListener("scroll",()=>{const p=scrollY,r=Math.max(-180,Math.min(180,p*.16));const o=document.getElementById("object");if(o)o.style.transform=`translate(-50%,-50%) rotateX(${18+Math.sin(p*.008)*10}deg) rotateY(${-25+r}deg)`;if(hero)hero.style.transform=`translateY(${Math.min(45,p*.04)}px)`},{passive:true});
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("show")}),{threshold:.12});document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+
+const modal=document.getElementById("modal"),mt=document.getElementById("modalTitle"),mx=document.getElementById("modalText"),md=document.getElementById("modalDownload"),frame=document.getElementById("modalFrame"),status=document.getElementById("copyStatus");
+const tabPreview=document.getElementById("tabPreview"),tabCode=document.getElementById("tabCode"),previewPanel=document.getElementById("previewPanel"),codePanel=document.getElementById("codePanel");
+function setPreviewTab(which){
+  const isCode=which==="code";
+  tabPreview.classList.toggle("active",!isCode);
+  tabCode.classList.toggle("active",isCode);
+  previewPanel.classList.toggle("hide",isCode);
+  codePanel.classList.toggle("show",isCode);
+  const codeToolbar=document.getElementById("codeToolbar");
+  if(codeToolbar)codeToolbar.classList.toggle("show",isCode);
+  codePanel.setAttribute("aria-hidden",String(!isCode));
+}
+if(tabPreview)tabPreview.onclick=()=>setPreviewTab("preview");
+if(tabCode)tabCode.onclick=()=>setPreviewTab("code");
+
+const NEON_CODE_B64="PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCxpbml0aWFsLXNjYWxlPTEiPgo8dGl0bGU+aGV0ZzwvdGl0bGU+CjxzdHlsZT4KKnttYXJnaW46MDtwYWRkaW5nOjA7Ym94LXNpemluZzpib3JkZXItYm94fWh0bWx7c2Nyb2xsLWJlaGF2aW9yOnNtb290aH1ib2R5e21pbi1oZWlnaHQ6MTAwdmg7YmFja2dyb3VuZDojMDIwNTA0O2NvbG9yOiNmZmY7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7b3ZlcmZsb3cteDpoaWRkZW59OnJvb3R7LS1ncmVlbjojNTVmZjk5Oy0tZ3JlZW4yOiMxOWU4Nzk7LS1kYXJrOiMwMjA1MDQ7LS1tdXRlZDojNzg4NDdlOy0tbGluZTojZmZmZmZmMTJ9Ym9keTpiZWZvcmV7Y29udGVudDoiIjtwb3NpdGlvbjpmaXhlZDtpbnNldDowO3otaW5kZXg6LTEwO2JhY2tncm91bmQ6cmFkaWFsLWdyYWRpZW50KGNpcmNsZSBhdCA3NSUgMjAlLCM1NWZmOTkyMCx0cmFuc3BhcmVudCAzMCUpLHJhZGlhbC1ncmFkaWVudChjaXJjbGUgYXQgMTUlIDc1JSwjMDg3YzQzMTgsdHJhbnNwYXJlbnQgMzUlKSwjMDIwNTA0fWJvZHk6YWZ0ZXJ7Y29udGVudDoiIjtwb3NpdGlvbjpmaXhlZDtpbnNldDowO3otaW5kZXg6MTAwO3BvaW50ZXItZXZlbnRzOm5vbmU7b3BhY2l0eTouMDI1O2JhY2tncm91bmQtaW1hZ2U6dXJsKCJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzE4MCcgaGVpZ2h0PScxODAnJTNFJTNDZmlsdGVyIGlkPSduJyUzRSUzQ2ZlVHVyYnVsZW5jZSBiYXNlRnJlcXVlbmN5PScuOCcgbnVtT2N0YXZlcz0nMycvJTNFJTNDL2ZpbHRlciUzRSUzQ3JlY3Qgd2lkdGg9JzEwMCUyNScgaGVpZ2h0PScxMDAlMjUnIGZpbHRlcj0ndXJsKCUyM24pJy8lM0UlM0Mvc3ZnJTNFIil9LmdyaWR7cG9zaXRpb246Zml4ZWQ7aW5zZXQ6MDt6LWluZGV4Oi01O29wYWNpdHk6LjA4O2JhY2tncm91bmQtaW1hZ2U6bGluZWFyLWdyYWRpZW50KCNmZmYgMXB4LHRyYW5zcGFyZW50IDFweCksbGluZWFyLWdyYWRpZW50KDkwZGVnLCNmZmYgMXB4LHRyYW5zcGFyZW50IDFweCk7YmFja2dyb3VuZC1zaXplOjcwcHggNzBweDttYXNrLWltYWdlOmxpbmVhci1ncmFkaWVudCh0byBib3R0b20sYmxhY2ssdHJhbnNwYXJlbnQgOTAlKX0uYW1iaWVudHtwb3NpdGlvbjpmaXhlZDt3aWR0aDo2MDBweDtoZWlnaHQ6NjAwcHg7cmlnaHQ6LTE1MHB4O3RvcDoxMDBweDtib3JkZXItcmFkaXVzOjUwJTtiYWNrZ3JvdW5kOnJhZGlhbC1ncmFkaWVudChjaXJjbGUsIzU1ZmY5OTE4LHRyYW5zcGFyZW50IDcwJSk7ZmlsdGVyOmJsdXIoMjVweCk7ei1pbmRleDotNDthbmltYXRpb246YW1iaWVudCA4cyBlYXNlLWluLW91dCBpbmZpbml0ZX1Aa2V5ZnJhbWVzIGFtYmllbnR7MCUsMTAwJXt0cmFuc2Zvcm06c2NhbGUoLjgpO29wYWNpdHk6LjV9NTAle3RyYW5zZm9ybTpzY2FsZSgxLjIpO29wYWNpdHk6MX19Ci5uYXZ7cG9zaXRpb246Zml4ZWQ7bGVmdDowO3RvcDowO3dpZHRoOjEwMCU7aGVpZ2h0Ojc2cHg7ei1pbmRleDo1MDA7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjtwYWRkaW5nOjAgNSU7YmFja2dyb3VuZDojMDIwNTA0Yjg7Ym9yZGVyLWJvdHRvbToxcHggc29saWQgI2ZmZmZmZjA4O2JhY2tkcm9wLWZpbHRlcjpibHVyKDE4cHgpfS5sb2dve2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjEycHg7Y29sb3I6I2ZmZjt0ZXh0LWRlY29yYXRpb246bm9uZTtmb250LXNpemU6MThweDtmb250LXdlaWdodDpib2xkO2xldHRlci1zcGFjaW5nOjJweH0ubG9nby1tYXJre3dpZHRoOjI3cHg7aGVpZ2h0OjI3cHg7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1ncmVlbik7Ym9yZGVyLXJhZGl1czo2cHg7dHJhbnNmb3JtOnJvdGF0ZSg0NWRlZyk7Ym94LXNoYWRvdzowIDAgMjVweCAjNTVmZjk5NDB9LmxvZ28tbWFyazpiZWZvcmV7Y29udGVudDoiIjtwb3NpdGlvbjphYnNvbHV0ZTtpbnNldDo2cHg7Ym9yZGVyOjFweCBzb2xpZCAjZmZmODtib3JkZXItcmFkaXVzOjNweH0ubmF2LWxpbmtze2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjMycHh9Lm5hdi1saW5rcyBhe2NvbG9yOiM3ODg0N2U7dGV4dC1kZWNvcmF0aW9uOm5vbmU7Zm9udC1zaXplOjEwcHg7bGV0dGVyLXNwYWNpbmc6MnB4fS5uYXYtYnV0dG9ue2hlaWdodDo0MHB4O3BhZGRpbmc6MCAyMnB4O2NvbG9yOiNmZmY7YmFja2dyb3VuZDojZmZmZmZmMDg7Ym9yZGVyOjFweCBzb2xpZCAjZmZmZmZmMWM7Ym9yZGVyLXJhZGl1czozMHB4O2N1cnNvcjpwb2ludGVyO2ZvbnQtc2l6ZToxMHB4O2ZvbnQtd2VpZ2h0OmJvbGQ7bGV0dGVyLXNwYWNpbmc6MXB4fS5oZXJve3Bvc2l0aW9uOnJlbGF0aXZlO21pbi1oZWlnaHQ6MTAwdmg7aGVpZ2h0OjkwMHB4O3dpZHRoOjEwMCU7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtwYWRkaW5nOjEwMHB4IDUlIDYwcHg7b3ZlcmZsb3c6aGlkZGVufS5oZXJvLWZyYW1le3Bvc2l0aW9uOmFic29sdXRlO2luc2V0OjIwcHggMi41JTtib3JkZXI6MXB4IHNvbGlkICNmZmZmZmYwODtib3JkZXItcmFkaXVzOjMwcHg7cG9pbnRlci1ldmVudHM6bm9uZX0uaGVyby10ZXh0e3Bvc2l0aW9uOnJlbGF0aXZlO3dpZHRoOjQ4JTttYXgtd2lkdGg6NjUwcHg7ei1pbmRleDo1MDthbmltYXRpb246dGV4dEluIDEuMnMgLjFzIGJvdGh9QGtleWZyYW1lcyB0ZXh0SW57ZnJvbXtvcGFjaXR5OjA7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTIyMHB4KX10b3tvcGFjaXR5OjE7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoMCl9fS5leWVicm93e2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjEwcHg7bWFyZ2luLWJvdHRvbToyNXB4O2NvbG9yOiM3Yzg5ODI7Zm9udC1zaXplOjEwcHg7bGV0dGVyLXNwYWNpbmc6NHB4fS5leWVicm93LWRvdHt3aWR0aDo2cHg7aGVpZ2h0OjZweDtib3JkZXItcmFkaXVzOjUwJTtiYWNrZ3JvdW5kOnZhcigtLWdyZWVuKTtib3gtc2hhZG93OjAgMCAxMHB4IHZhcigtLWdyZWVuKSwwIDAgMjVweCB2YXIoLS1ncmVlbik7YW5pbWF0aW9uOnB1bHNlIDJzIGluZmluaXRlfUBrZXlmcmFtZXMgcHVsc2V7MCUsMTAwJXt0cmFuc2Zvcm06c2NhbGUoLjcpO29wYWNpdHk6LjV9NTAle3RyYW5zZm9ybTpzY2FsZSgxLjQpO29wYWNpdHk6MX19Lmhlcm8tdGl0bGV7Zm9udC1zaXplOmNsYW1wKDUycHgsNi41dncsOTBweCk7bGluZS1oZWlnaHQ6LjkyO2ZvbnQtd2VpZ2h0OjQwMDtsZXR0ZXItc3BhY2luZzotNXB4fS5oZXJvLXRpdGxlIC5ncmVlbntjb2xvcjp2YXIoLS1ncmVlbik7dGV4dC1zaGFkb3c6MCAwIDQ1cHggIzU1ZmY5OTI1fS5oZXJvLXRpdGxlIC5kaW17Y29sb3I6Izg5OTU4Zn0uaGVyby1kZXNjcmlwdGlvbnttYXgtd2lkdGg6NDcwcHg7bWFyZ2luLXRvcDoyOHB4O2NvbG9yOiM3ZDg5ODM7Zm9udC1zaXplOjE0cHg7bGluZS1oZWlnaHQ6MS44fS5hY3Rpb25ze2Rpc3BsYXk6ZmxleDtnYXA6MTJweDttYXJnaW4tdG9wOjMwcHh9LnByaW1hcnktYnV0dG9uLC5zZWNvbmRhcnktYnV0dG9ue2hlaWdodDo1MHB4O3BhZGRpbmc6MCAyNXB4O2JvcmRlci1yYWRpdXM6MzBweDtjdXJzb3I6cG9pbnRlcjtmb250LXNpemU6MTBweDtmb250LXdlaWdodDpib2xkO2xldHRlci1zcGFjaW5nOjFweH0ucHJpbWFyeS1idXR0b257Y29sb3I6I2ZmZjtib3JkZXI6MXB4IHNvbGlkICM1NWZmOTk2MDtiYWNrZ3JvdW5kOiM1NWZmOTkxMH0uc2Vjb25kYXJ5LWJ1dHRvbntjb2xvcjojODc5MjhjO2JvcmRlcjoxcHggc29saWQgI2ZmZmZmZjE4O2JhY2tncm91bmQ6I2ZmZmZmZjA1fS53b3JsZHtwb3NpdGlvbjphYnNvbHV0ZTt3aWR0aDo2NSU7aGVpZ2h0OjgwMHB4O3JpZ2h0Oi01JTt0b3A6NTAlO3RyYW5zZm9ybTp0cmFuc2xhdGVZKC01MCUpO3BlcnNwZWN0aXZlOjE2MDBweDt6LWluZGV4OjIwfS53b3JsZC1pbm5lcntwb3NpdGlvbjphYnNvbHV0ZTtpbnNldDowO3RyYW5zZm9ybS1zdHlsZTpwcmVzZXJ2ZS0zZH0uY2VudGVyLWdsb3d7cG9zaXRpb246YWJzb2x1dGU7bGVmdDo1MCU7dG9wOjUwJTt3aWR0aDo1MDBweDtoZWlnaHQ6NTAwcHg7dHJhbnNmb3JtOnRyYW5zbGF0ZSgtNTAlLC01MCUpO2JvcmRlci1yYWRpdXM6NTAlO2JhY2tncm91bmQ6cmFkaWFsLWdyYWRpZW50KGNpcmNsZSwjNTVmZjk5MjgsIzU1ZmY5OTA4IDQ1JSx0cmFuc3BhcmVudCA3MiUpO2ZpbHRlcjpibHVyKDI1cHgpO2FuaW1hdGlvbjpnbG93IDRzIGVhc2UtaW4tb3V0IGluZmluaXRlfUBrZXlmcmFtZXMgZ2xvd3swJSwxMDAle3RyYW5zZm9ybTp0cmFuc2xhdGUoLTUwJSwtNTAlKSBzY2FsZSguOCk7b3BhY2l0eTouNX01MCV7dHJhbnNmb3JtOnRyYW5zbGF0ZSgtNTAlLC01MCUpIHNjYWxlKDEuMTUpO29wYWNpdHk6MX19LnJpbmd7cG9zaXRpb246YWJzb2x1dGU7bGVmdDo1MCU7dG9wOjUwJTtib3JkZXItcmFkaXVzOjUwJTt0cmFuc2Zvcm0tc3R5bGU6cHJlc2VydmUtM2R9LnJpbmcub25le3dpZHRoOjU3MHB4O2hlaWdodDoxODVweDtib3JkZXI6MXB4IHNvbGlkICM1NWZmOTkzODt0cmFuc2Zvcm06dHJhbnNsYXRlKC01MCUsLTUwJSkgcm90YXRlWCg3MGRlZykgcm90YXRlWigxMmRlZyk7YW5pbWF0aW9uOnJpbmcxIDEycyBsaW5lYXIgaW5maW5pdGV9LnJpbmcudHdve3dpZHRoOjQ2MHB4O2hlaWdodDoxNDVweDtib3JkZXI6MXB4IHNvbGlkICNmZmZmZmYxODt0cmFuc2Zvcm06dHJhbnNsYXRlKC01MCUsLTUwJSkgcm90YXRlWCg3MGRlZykgcm90YXRlWSgyMGRlZyk7YW5pbWF0aW9uOnJpbmcyIDE1cyBsaW5lYXIgaW5maW5pdGUgcmV2ZXJzZX0ucmluZy50aHJlZXt3aWR0aDo2ODBweDtoZWlnaHQ6MjIwcHg7Ym9yZGVyOjFweCBzb2xpZCAjMTllODc5MTg7dHJhbnNmb3JtOnRyYW5zbGF0ZSgtNTAlLC01MCUpIHJvdGF0ZVgoNjVkZWcpIHJvdGF0ZVooLTIwZGVnKTthbmltYXRpb246cmluZzMgMjBzIGxpbmVhciBpbmZpbml0ZX1Aa2V5ZnJhbWVzIHJpbmcxe3Rve3RyYW5zZm9ybTp0cmFuc2xhdGUoLTUwJSwtNTAlKSByb3RhdGVYKDcwZGVnKSByb3RhdGVaKDM3MmRlZyl9fUBrZXlmcmFtZXMgcmluZzJ7dG97dHJhbnNmb3JtOnRyYW5zbGF0ZSgtNTAlLC01MCUpIHJvdGF0ZVgoNzBkZWcpIHJvdGF0ZVkoMjBkZWcpIHJvdGF0ZVooLTM2MGRlZyl9fUBrZXlmcmFtZXMgcmluZzN7dG97dHJhbnNmb3JtOnRyYW5zbGF0ZSgtNTAlLC01MCUpIHJvdGF0ZVgoNjVkZWcpIHJvdGF0ZVooMzQwZGVnKX19Ci5jdWJlLWFzc2VtYmx5e3Bvc2l0aW9uOmFic29sdXRlO2xlZnQ6NTAlO3RvcDo1MCU7d2lkdGg6MzAwcHg7aGVpZ2h0OjMwMHB4O3RyYW5zZm9ybTp0cmFuc2xhdGUoLTUwJSwtNTAlKSByb3RhdGVYKC0xOGRlZykgcm90YXRlWSgyNWRlZyk7dHJhbnNmb3JtLXN0eWxlOnByZXNlcnZlLTNkO3otaW5kZXg6NTB9LmN1YmUtcGllY2V7cG9zaXRpb246YWJzb2x1dGU7d2lkdGg6MTE4cHg7aGVpZ2h0OjExOHB4O2JvcmRlcjoxcHggc29saWQgI2ZmZmZmZmFhO2JhY2tncm91bmQ6bGluZWFyLWdyYWRpZW50KDEzNWRlZywjZmZmLCNkOWZmZWEgMTUlLCM1NWZmOTkgNDMlLCMxMTYyM2IgNzAlLCMwMjE3MGMpO2JveC1zaGFkb3c6aW5zZXQgMCAwIDI4cHggI2ZmZjQsMCAwIDM1cHggIzU1ZmY5OTMwO3RyYW5zZm9ybS1zdHlsZTpwcmVzZXJ2ZS0zZDtjbGlwLXBhdGg6cG9seWdvbigwIDAsNzglIDQlLDEwMCUgMjMlLDk0JSAxMDAlLDIwJSA5NCUsMCA2OCUpfS5wMXtsZWZ0OjA7dG9wOjA7YW5pbWF0aW9uOnAxIDNzIC4xcyBib3RofS5wMntyaWdodDowO3RvcDowO2FuaW1hdGlvbjpwMiAzcyAuMnMgYm90aH0ucDN7bGVmdDowO2JvdHRvbTowO2FuaW1hdGlvbjpwMyAzcyAuM3MgYm90aH0ucDR7cmlnaHQ6MDtib3R0b206MDthbmltYXRpb246cDQgM3MgLjRzIGJvdGh9LnA1e2xlZnQ6OTFweDt0b3A6OTFweDthbmltYXRpb246cDUgM3MgLjVzIGJvdGh9QGtleWZyYW1lcyBwMXswJXtvcGFjaXR5OjA7dHJhbnNmb3JtOnRyYW5zbGF0ZTNkKC03NTBweCwtNTAwcHgsNjUwcHgpIHJvdGF0ZVgoMTgwZGVnKSByb3RhdGVZKC0xMzBkZWcpIHJvdGF0ZVooMTIwZGVnKSBzY2FsZSguMDUpfTY1JXtvcGFjaXR5OjE7dHJhbnNmb3JtOnRyYW5zbGF0ZTNkKC0xNjBweCwtMTIwcHgsMTgwcHgpIHJvdGF0ZVgoNTVkZWcpIHJvdGF0ZVkoLTUwZGVnKSByb3RhdGVaKDQ1ZGVnKSBzY2FsZSgxLjEyKX0xMDAle29wYWNpdHk6MTt0cmFuc2Zvcm06bm9uZX19QGtleWZyYW1lcyBwMnswJXtvcGFjaXR5OjA7dHJhbnNmb3JtOnRyYW5zbGF0ZTNkKDc2MHB4LC01MjBweCw1NTBweCkgcm90YXRlWCgtMTUwZGVnKSByb3RhdGVZKDE0MGRlZykgcm90YXRlWigtMTIwZGVnKSBzY2FsZSguMDUpfTY1JXtvcGFjaXR5OjE7dHJhbnNmb3JtOnRyYW5zbGF0ZTNkKDE3MHB4LC0xMzBweCwxODBweCkgcm90YXRlWCgtNjBkZWcpIHJvdGF0ZVkoNTVkZWcpIHJvdGF0ZVooLTQ1ZGVnKSBzY2FsZSgxLjEyKX0xMDAle29wYWNpdHk6MTt0cmFuc2Zvcm06bm9uZX19QGtleWZyYW1lcyBwM3swJXtvcGFjaXR5OjA7dHJhbnNmb3JtOnRyYW5zbGF0ZTNkKC04MDBweCw1NjBweCwtNTAwcHgpIHJvdGF0ZVgoMTYwZGVnKSByb3RhdGVZKC0xNjBkZWcpIHJvdGF0ZVooMTMwZGVnKSBzY2FsZSguMDUpfTY1JXtvcGFjaXR5OjE7dHJhbnNmb3JtOnRyYW5zbGF0ZTNkKC0xNzBweCwxNjBweCwtMTUwcHgpIHJvdGF0ZVgoNjVkZWcpIHJvdGF0ZVkoLTYwZGVnKSByb3RhdGVaKDUwZGVnKSBzY2FsZSgxLjEyKX0xMDAle29wYWNpdHk6MTt0cmFuc2Zvcm06bm9uZX19QGtleWZyYW1lcyBwNHswJXtvcGFjaXR5OjA7dHJhbnNmb3JtOnRyYW5zbGF0ZTNkKDgyMHB4LDYwMHB4LDQ1MHB4KSByb3RhdGVYKC0xNzBkZWcpIHJvdGF0ZVkoMTYwZGVnKSByb3RhdGVaKC0xNDBkZWcpIHNjYWxlKC4wNSl9NjUle29wYWNpdHk6MTt0cmFuc2Zvcm06dHJhbnNsYXRlM2QoMTgwcHgsMTcwcHgsMTUwcHgpIHJvdGF0ZVgoLTcwZGVnKSByb3RhdGVZKDY1ZGVnKSByb3RhdGVaKC01NWRlZykgc2NhbGUoMS4xMil9MTAwJXtvcGFjaXR5OjE7dHJhbnNmb3JtOm5vbmV9fUBrZXlmcmFtZXMgcDV7MCV7b3BhY2l0eTowO3RyYW5zZm9ybTp0cmFuc2xhdGUzZCgtNTAwcHgsNTBweCwtNzAwcHgpIHJvdGF0ZVgoMTkwZGVnKSByb3RhdGVZKC0xODBkZWcpIHJvdGF0ZVooMTAwZGVnKSBzY2FsZSguMDQpfTY1JXtvcGFjaXR5OjE7dHJhbnNmb3JtOnRyYW5zbGF0ZTNkKC0xMjBweCwxMHB4LC0xNzBweCkgcm90YXRlWCg4MGRlZykgcm90YXRlWSgtNzBkZWcpIHJvdGF0ZVooNDBkZWcpIHNjYWxlKDEuMTUpfTEwMCV7b3BhY2l0eToxO3RyYW5zZm9ybTpub25lfX0uY3ViZS1jb3Jle3Bvc2l0aW9uOmFic29sdXRlO2xlZnQ6NTAlO3RvcDo1MCU7d2lkdGg6MTEycHg7aGVpZ2h0OjExMnB4O3RyYW5zZm9ybTp0cmFuc2xhdGUoLTUwJSwtNTAlKSB0cmFuc2xhdGVaKDMwcHgpIHNjYWxlKC4wMik7b3BhY2l0eTowO2JvcmRlcjoycHggc29saWQgI2ZmZjtib3JkZXItcmFkaXVzOjE0cHg7YmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoMTM1ZGVnLCNmZmYsI2QwZmZlOCAxNSUsIzU1ZmY5OSA0NSUsIzA4N2E0MyA3MiUsIzAxMTcwYik7Ym94LXNoYWRvdzowIDAgMzVweCAjNTVmZjk5LDAgMCAxMDBweCAjNTVmZjk5NTAsaW5zZXQgMCAwIDM1cHggI2ZmZjU7YW5pbWF0aW9uOmNvcmVJbiAxLjRzIDIuNXMgY3ViaWMtYmV6aWVyKC4xNiwxLC4zLDEpIGZvcndhcmRzfS5jdWJlLWNvcmU6YmVmb3Jle2NvbnRlbnQ6IiI7cG9zaXRpb246YWJzb2x1dGU7aW5zZXQ6MTVweDtib3JkZXI6MnB4IHNvbGlkICNmZmY5O2JvcmRlci1yYWRpdXM6OXB4O3RyYW5zZm9ybTpyb3RhdGUoNDVkZWcpfS5jdWJlLWNvcmU6YWZ0ZXJ7Y29udGVudDoiIjtwb3NpdGlvbjphYnNvbHV0ZTtsZWZ0OjMycHg7dG9wOjMycHg7d2lkdGg6NDVweDtoZWlnaHQ6NDVweDtiYWNrZ3JvdW5kOiNmZmY7Y2xpcC1wYXRoOnBvbHlnb24oNTAlIDAsMTAwJSA1MCUsNTAlIDEwMCUsMCA1MCUpO2ZpbHRlcjpkcm9wLXNoYWRvdygwIDAgMTJweCAjZmZmKX1Aa2V5ZnJhbWVzIGNvcmVJbnswJXtvcGFjaXR5OjA7dHJhbnNmb3JtOnRyYW5zbGF0ZSgtNTAlLC01MCUpIHRyYW5zbGF0ZVooNTAwcHgpIHNjYWxlKC4wMikgcm90YXRlWCgxODBkZWcpIHJvdGF0ZVkoMTgwZGVnKX02MCV7b3BhY2l0eToxO3RyYW5zZm9ybTp0cmFuc2xhdGUoLTUwJSwtNTAlKSB0cmFuc2xhdGVaKDgwcHgpIHNjYWxlKDEuMTgpIHJvdGF0ZVgoNDVkZWcpIHJvdGF0ZVkoNTVkZWcpfTEwMCV7b3BhY2l0eToxO3RyYW5zZm9ybTp0cmFuc2xhdGUoLTUwJSwtNTAlKSB0cmFuc2xhdGVaKDMwcHgpIHNjYWxlKDEpIHJvdGF0ZVgoMCkgcm90YXRlWSgwKX19LnBhcnRpY2xle3Bvc2l0aW9uOmFic29sdXRlO3dpZHRoOjRweDtoZWlnaHQ6NHB4O2JvcmRlci1yYWRpdXM6NTAlO2JhY2tncm91bmQ6dmFyKC0tZ3JlZW4pO2JveC1zaGFkb3c6MCAwIDEwcHggdmFyKC0tZ3JlZW4pLDAgMCAyNXB4ICM1NWZmOTk3N30ucGFydGljbGUuYXtsZWZ0OjEyJTt0b3A6MjAlO2FuaW1hdGlvbjpmbG9hdEEgNXMgZWFzZS1pbi1vdXQgaW5maW5pdGV9LnBhcnRpY2xlLmJ7bGVmdDo4NCU7dG9wOjE4JTthbmltYXRpb246ZmxvYXRCIDZzIGVhc2UtaW4tb3V0IGluZmluaXRlfS5wYXJ0aWNsZS5je2xlZnQ6MTglO3RvcDo3NSU7YW5pbWF0aW9uOmZsb2F0QyA3cyBlYXNlLWluLW91dCBpbmZpbml0ZX0ucGFydGljbGUuZHtsZWZ0Ojg3JTt0b3A6NzMlO2FuaW1hdGlvbjpmbG9hdEQgNS41cyBlYXNlLWluLW91dCBpbmZpbml0ZX1Aa2V5ZnJhbWVzIGZsb2F0QXs1MCV7dHJhbnNmb3JtOnRyYW5zbGF0ZSg0MHB4LC00NXB4KX19QGtleWZyYW1lcyBmbG9hdEJ7NTAle3RyYW5zZm9ybTp0cmFuc2xhdGUoLTUwcHgsMzVweCl9fUBrZXlmcmFtZXMgZmxvYXRDezUwJXt0cmFuc2Zvcm06dHJhbnNsYXRlKDQ1cHgsLTMwcHgpfX1Aa2V5ZnJhbWVzIGZsb2F0RHs1MCV7dHJhbnNmb3JtOnRyYW5zbGF0ZSgtMzVweCwtNTBweCl9fS5zY3JvbGx7cG9zaXRpb246YWJzb2x1dGU7bGVmdDo1JTtib3R0b206MzVweDt6LWluZGV4OjgwO2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjEycHg7Y29sb3I6IzY0NzE2Yjtmb250LXNpemU6OXB4O2xldHRlci1zcGFjaW5nOjNweH0uc2Nyb2xsLWxpbmV7d2lkdGg6NTBweDtoZWlnaHQ6MXB4O2JhY2tncm91bmQ6bGluZWFyLWdyYWRpZW50KDkwZGVnLHZhcigtLWdyZWVuKSx0cmFuc3BhcmVudCl9LnN0YXR1c3twb3NpdGlvbjphYnNvbHV0ZTtyaWdodDo1JTtib3R0b206MzVweDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDo4cHg7Y29sb3I6IzY0NzE2Yjtmb250LXNpemU6OHB4O2xldHRlci1zcGFjaW5nOjJweH0uc3RhdHVzLWRvdHt3aWR0aDo1cHg7aGVpZ2h0OjVweDtib3JkZXItcmFkaXVzOjUwJTtiYWNrZ3JvdW5kOnZhcigtLWdyZWVuKTtib3gtc2hhZG93OjAgMCAxMHB4IHZhcigtLWdyZWVuKX0KQG1lZGlhKG1heC13aWR0aDo5MDBweCl7Lm5hdi1saW5rc3tkaXNwbGF5Om5vbmV9Lmhlcm97aGVpZ2h0OjkyMHB4O21pbi1oZWlnaHQ6OTIwcHg7YWxpZ24taXRlbXM6ZmxleC1zdGFydDtwYWRkaW5nOjEyMHB4IDIycHggNjBweH0uaGVyby10ZXh0e3dpZHRoOjEwMCV9Lndvcmxke3dpZHRoOjEyNSU7aGVpZ2h0OjU2MHB4O3JpZ2h0Oi0yNSU7dG9wOjUxMHB4O3RyYW5zZm9ybTpub25lfX1AbWVkaWEobWF4LXdpZHRoOjUyMHB4KXsubmF2e2hlaWdodDo2OHB4O3BhZGRpbmc6MCAxOHB4fS5sb2dve2ZvbnQtc2l6ZToxNXB4fS5uYXYtYnV0dG9ue2hlaWdodDozNnB4O3BhZGRpbmc6MCAxNXB4fS5oZXJvLXRpdGxle2ZvbnQtc2l6ZTo0OXB4O2xldHRlci1zcGFjaW5nOi00cHh9Lmhlcm8tZGVzY3JpcHRpb257Zm9udC1zaXplOjEzcHh9LmFjdGlvbnN7ZmxleC1kaXJlY3Rpb246Y29sdW1uO2FsaWduLWl0ZW1zOmZsZXgtc3RhcnR9LnByaW1hcnktYnV0dG9uLC5zZWNvbmRhcnktYnV0dG9ue3dpZHRoOjE5MHB4fS53b3JsZHt3aWR0aDoxNDUlO3JpZ2h0Oi0zNSV9LmN1YmUtYXNzZW1ibHl7dHJhbnNmb3JtOnRyYW5zbGF0ZSgtNTAlLC01MCUpIHNjYWxlKC43KSByb3RhdGVYKC0xOGRlZykgcm90YXRlWSgyNWRlZyl9fQo8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5Pgo8ZGl2IGNsYXNzPSJncmlkIj48L2Rpdj48ZGl2IGNsYXNzPSJhbWJpZW50Ij48L2Rpdj4KPGhlYWRlciBjbGFzcz0ibmF2Ij48YSBocmVmPSIjIiBjbGFzcz0ibG9nbyI+PHNwYW4gY2xhc3M9ImxvZ28tbWFyayI+PC9zcGFuPjxzcGFuPmVudGVyIHlvdXIgYnJhbmQgbmFtZTwvc3Bhbj48L2E+PGRpdiBjbGFzcz0ibmF2LWxpbmtzIj48YSBocmVmPSIjIj5TWVNURU08L2E+PGEgaHJlZj0iIyI+TUFURVJJQUw8L2E+PGEgaHJlZj0iIyI+Q09NTUFORDwvYT48YSBocmVmPSIjIj5TSUdOPC9hPjwvZGl2PjxidXR0b24gY2xhc3M9Im5hdi1idXR0b24iIG9uY2xpY2s9ImRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJy5oZXJvJykuc2Nyb2xsSW50b1ZpZXcoe2JlaGF2aW9yOidzbW9vdGgnfSkiPkVOVEVSIEFQUDwvYnV0dG9uPjwvaGVhZGVyPgo8bWFpbj48c2VjdGlvbiBjbGFzcz0iaGVybyI+PGRpdiBjbGFzcz0iaGVyby1mcmFtZSI+PC9kaXY+PGRpdiBjbGFzcz0iaGVyby10ZXh0Ij48ZGl2IGNsYXNzPSJleWVicm93Ij48c3BhbiBjbGFzcz0iZXllYnJvdy1kb3QiPjwvc3Bhbj5ORVhUIEdFTkVSQVRJT04gRElHSVRBTCBTWVNURU08L2Rpdj48aDEgY2xhc3M9Imhlcm8tdGl0bGUiPkJ1aWxkIFlvdXI8YnI+PHNwYW4gY2xhc3M9ImdyZWVuIj5EaWdpdGFsPC9zcGFuPjxicj48c3BhbiBjbGFzcz0iZGltIj5FeHBlcmllbmNlLjwvc3Bhbj48L2gxPjxwIGNsYXNzPSJoZXJvLWRlc2NyaXB0aW9uIj5BIGZ1dHVyaXN0aWMgaW50ZXJmYWNlIGNvbWJpbmluZyBpbnRlbGxpZ2VudCBzeXN0ZW1zLCBpbW1lcnNpdmUgM0QgdmlzdWFscyBhbmQgc21vb3RoIGRpZ2l0YWwgaW50ZXJhY3Rpb24gaW50byBvbmUgY2luZW1hdGljIGV4cGVyaWVuY2UuPC9wPjxkaXYgY2xhc3M9ImFjdGlvbnMiPjxidXR0b24gY2xhc3M9InByaW1hcnktYnV0dG9uIiBvbmNsaWNrPSJkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcud29ybGQnKS5zY3JvbGxJbnRvVmlldyh7YmVoYXZpb3I6J3Ntb290aCcsYmxvY2s6J2NlbnRlcid9KSI+RVhQTE9SRSBTWVNURU0g4oaSPC9idXR0b24+PGJ1dHRvbiBjbGFzcz0ic2Vjb25kYXJ5LWJ1dHRvbiIgb25jbGljaz0iZG9jdW1lbnQucXVlcnlTZWxlY3RvcignLndvcmxkJykuc2Nyb2xsSW50b1ZpZXcoe2JlaGF2aW9yOidzbW9vdGgnLGJsb2NrOidjZW50ZXInfSkiPlZJRVcgRVhQRVJJRU5DRTwvYnV0dG9uPjwvZGl2PjwvZGl2PjxkaXYgY2xhc3M9IndvcmxkIj48ZGl2IGNsYXNzPSJ3b3JsZC1pbm5lciI+PGRpdiBjbGFzcz0iY2VudGVyLWdsb3ciPjwvZGl2PjxkaXYgY2xhc3M9InJpbmcgb25lIj48L2Rpdj48ZGl2IGNsYXNzPSJyaW5nIHR3byI+PC9kaXY+PGRpdiBjbGFzcz0icmluZyB0aHJlZSI+PC9kaXY+PGRpdiBjbGFzcz0iY3ViZS1hc3NlbWJseSI+PGRpdiBjbGFzcz0iY3ViZS1waWVjZSBwMSI+PC9kaXY+PGRpdiBjbGFzcz0iY3ViZS1waWVjZSBwMiI+PC9kaXY+PGRpdiBjbGFzcz0iY3ViZS1waWVjZSBwMyI+PC9kaXY+PGRpdiBjbGFzcz0iY3ViZS1waWVjZSBwNCI+PC9kaXY+PGRpdiBjbGFzcz0iY3ViZS1waWVjZSBwNSI+PC9kaXY+PGRpdiBjbGFzcz0iY3ViZS1jb3JlIj48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJwYXJ0aWNsZSBhIj48L2Rpdj48ZGl2IGNsYXNzPSJwYXJ0aWNsZSBiIj48L2Rpdj48ZGl2IGNsYXNzPSJwYXJ0aWNsZSBjIj48L2Rpdj48ZGl2IGNsYXNzPSJwYXJ0aWNsZSBkIj48L2Rpdj48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJzY3JvbGwiPjxzcGFuIGNsYXNzPSJzY3JvbGwtbGluZSI+PC9zcGFuPlNDUk9MTCBUTyBFWFBMT1JFPC9kaXY+PGRpdiBjbGFzcz0ic3RhdHVzIj48c3BhbiBjbGFzcz0ic3RhdHVzLWRvdCI+PC9zcGFuPlNZU1RFTSBPTkxJTkU8L2Rpdj48L3NlY3Rpb24+PC9tYWluPgo8L2JvZHk+PC9odG1sPgo=";
+const NEON_CODE=(()=>{try{const bin=atob(NEON_CODE_B64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return new TextDecoder().decode(bytes)}catch(e){return ""}})();
+const NEON_CARD_CODE=NEON_CODE.replace('</style>',`
+/* Library card preview: show the hero + cube clearly inside the small card */
+@media(max-width:900px){.hero{height:430px!important;min-height:430px!important;padding:70px 18px 30px!important}.hero-text{width:54%!important}.hero-title{font-size:32px!important;letter-spacing:-3px!important}.hero-description{font-size:9px!important;line-height:1.4!important;margin-top:12px!important}.actions{margin-top:12px!important}.primary-button,.secondary-button{height:30px!important;padding:0 12px!important;font-size:7px!important;width:auto!important}.world{width:78%!important;height:350px!important;right:-4%!important;top:52%!important}.cube-assembly{transform:translate(-50%,-50%) scale(.58) rotateX(-18deg) rotateY(25deg)!important}.scroll,.status{display:none!important}.hero-frame{inset:8px 2%!important;border-radius:15px!important}}
+`+'</style>');
+let activeUrl="";
+function libraryExperienceUrl(){const u=new URL(location.href);u.searchParams.set("experience","neon-core");return u.href}
+document.querySelectorAll('.cardLiveView').forEach(f=>{if(f.closest('.websiteCard[data-url="local-neon-core"]'))f.srcdoc=NEON_CARD_CODE});
+function buildViewerPage(code,name,sourceUrl){
+  const safeCode=JSON.stringify(code||"");
+  const safeName=JSON.stringify(name||"SQEZX3D Experience");
+  const safeSource=JSON.stringify(sourceUrl||"");
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${name||"SQEZX3D Experience"} — Preview</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#05040b;color:#fff;font-family:Arial,Helvetica,sans-serif;overflow:hidden}.top{height:56px;display:flex;align-items:center;gap:7px;padding:8px 12px;background:#080711;border-bottom:1px solid #ffffff12;position:fixed;left:0;right:0;top:0;z-index:20}.tab,.download{border:1px solid #ffffff14;background:#ffffff06;color:#aaa5b5;border-radius:999px;padding:9px 14px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap}.tab.active{background:#fff;color:#111;border-color:#fff}.download{margin-left:auto;background:#a78bfa;color:#0b0720;border-color:#a78bfa}.page{position:fixed;top:56px;left:0;right:0;bottom:0;display:none}.page.active{display:flex}.previewPage{align-items:center;justify-content:center;padding:12px;background:#020107;overflow:hidden}.previewWrap{width:min(100%,1280px);aspect-ratio:16/9;position:relative;overflow:hidden;border:1px solid #ffffff14;border-radius:16px;background:#020504;box-shadow:0 30px 100px #000}.previewFrame{position:absolute;left:0;top:0;width:1280px;height:720px;border:0;background:#020504;transform-origin:top left}.codePage{padding:16px 16px 24px;background:#020107;overflow:auto;flex-direction:column;align-items:stretch}.code{margin:0;width:max-content;min-width:100%;color:#ddd7e7;font:12px/1.65 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;white-space:pre;user-select:text}.bottomDownload{margin:16px 0 0 auto;flex:0 0 auto}.title{position:absolute;left:14px;bottom:12px;z-index:3;padding:7px 10px;border-radius:10px;background:#05040bcc;border:1px solid #ffffff12;font-size:9px;color:#aaa5b5;backdrop-filter:blur(8px)}@media(max-width:600px){.top{height:52px;padding:7px 8px}.tab,.download{padding:8px 11px;font-size:9px}.page{top:52px}.previewPage{padding:8px}.previewWrap{width:100%;border-radius:12px}.codePage{padding:10px 10px 18px}.code{font-size:10px;line-height:1.55}.bottomDownload{margin:12px 0 0 auto}}
+</style></head><body><div class="top"><button class="tab active" id="p">Preview</button><button class="tab" id="c">Code Preview</button></div><section class="page previewPage active" id="pp"><div class="previewWrap" id="wrap"><iframe class="previewFrame" id="v" title="Live website preview"></iframe><div class="title">${name||"SQEZX3D Experience"}</div></div></section><section class="page codePage" id="cpPage"><pre class="code" id="cp"></pre><button class="download bottomDownload" id="d">Download Code</button></section><script>const CODE=${safeCode},NAME=${safeName},SOURCE=${safeSource};const p=document.getElementById('p'),c=document.getElementById('c'),pp=document.getElementById('pp'),cpPage=document.getElementById('cpPage'),v=document.getElementById('v'),cp=document.getElementById('cp'),wrap=document.getElementById('wrap');v.srcdoc=CODE;cp.textContent=CODE;function fit(){const s=Math.min(wrap.clientWidth/1280,wrap.clientHeight/720);v.style.transform='scale('+s+')'}function tab(x){const isCode=x==='c';p.classList.toggle('active',!isCode);c.classList.toggle('active',isCode);pp.classList.toggle('active',!isCode);cpPage.classList.toggle('active',isCode)}p.onclick=()=>tab('p');c.onclick=()=>tab('c');window.addEventListener('resize',fit);setTimeout(fit,30);document.getElementById('d').onclick=()=>{const b=new Blob([CODE],{type:'text/html;charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=(NAME||'SQEZX3D')+'.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1200)};<\/script></body></html>`;
+}
+function openPreview(card){
+  const name=card.dataset.title||"Preview";
+  const desc=card.dataset.desc||"Original 3D web experience";
+  const local=card.dataset.url==="local-neon-core";
+  const code=local?NEON_CODE:"";
+  const source=local?libraryExperienceUrl():(card.dataset.url||"");
+  if(!local && (!source || source.startsWith("PASTE_YOUR_"))){
+    // Still open the viewer page; the supplied card can be connected later.
+  }
+  const page=buildViewerPage(code,name,source);
+  const blob=new Blob([page],{type:"text/html;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const w=window.open(url,"_blank","noopener,noreferrer");
+  if(!w){location.href=url}else{setTimeout(()=>URL.revokeObjectURL(url),60000)}
+}
+document.querySelectorAll(".websiteCard").forEach(card=>{const preview=card.querySelector(".previewBtn");if(preview)preview.addEventListener("click",e=>{e.stopPropagation();openPreview(card)});card.addEventListener("click",e=>{if(!e.target.closest("button,a"))openPreview(card)});if(card.classList.contains("websiteOnlyCard")){card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openPreview(card)}})}});
+function closePreview(){modal.classList.remove("show");modal.setAttribute("aria-hidden","true");if(frame){frame.srcdoc="";frame.src="about:blank"}}document.getElementById("close").onclick=closePreview;modal.addEventListener("click",e=>{if(e.target===modal)closePreview()});
+document.getElementById("modalCopy").onclick=async()=>{if(!activeUrl){status.textContent="Link is not available.";return}try{await navigator.clipboard.writeText(activeUrl);status.textContent="Link copied. Paste it in Chrome to open this experience."}catch{const ta=document.createElement("textarea");ta.value=activeUrl;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand("copy");status.textContent="Link copied successfully."}catch{status.textContent="Copy failed. Long-press the link to copy it."}ta.remove()}};
+function buildDownloadViewer(){return buildViewerPage(NEON_CODE,"SQEZX3D Experience",libraryExperienceUrl())}
+function downloadCode(){const b=new Blob([NEON_CODE],{type:"text/html;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="SQEZX3D-website-code.html";a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);status.textContent="HTML code download started."}
+md.addEventListener("click",()=>{const b=new Blob([buildDownloadViewer()],{type:"text/html;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="SQEZX3D-website-preview.html";a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);status.textContent="Preview + Code file downloaded."});
+const codeDownloadTop=document.getElementById("codeDownloadTop");if(codeDownloadTop)codeDownloadTop.onclick=downloadCode;
+const modalCodeDownload=document.getElementById("modalCodeDownload");if(modalCodeDownload)modalCodeDownload.onclick=downloadCode;
+document.querySelectorAll(".cardCodeDownload").forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();downloadCode();}));
+document.getElementById("year").textContent=new Date().getFullYear();
+
+(function(){
+  const f=document.getElementById("futureOpen"),fm=document.getElementById("futureModal"),fc=document.getElementById("futureClose");
+  const show=()=>{if(!fm)return;fm.classList.add("show");fm.setAttribute("aria-hidden","false")};
+  const hide=()=>{if(!fm)return;fm.classList.remove("show");fm.setAttribute("aria-hidden","true")};
+  if(f)f.onclick=show;
+  if(fc)fc.onclick=hide;
+  if(fm)fm.addEventListener("click",e=>{if(e.target===fm)hide()});
+})();
+
+
+(function(){
+  const loader=document.getElementById("greenLoader");
+  const greenFrame=document.querySelector('.websiteCard[data-url="local-neon-core"] .cardLiveView');
+  if(!loader||!greenFrame)return;
+  const start=performance.now();
+  function done(){
+    const wait=Math.max(0,1500-(performance.now()-start));
+    setTimeout(()=>loader.classList.add("hide"),wait);
+  }
+  greenFrame.addEventListener("load",done,{once:true});
+  setTimeout(done,3200);
+})();
+
+</script>
+<script>
+(function(){const cm=document.getElementById("copyrightModal"),open=document.getElementById("copyrightOpen"),close=()=>{cm.classList.remove("show");cm.setAttribute("aria-hidden","true")};if(open)open.onclick=e=>{e.preventDefault();cm.classList.add("show");cm.setAttribute("aria-hidden","false")};["copyrightClose","copyrightClose2"].forEach(id=>{const b=document.getElementById(id);if(b)b.onclick=close});const cs=document.getElementById("copyrightServices");if(cs)cs.onclick=close;if(cm)cm.addEventListener("click",e=>{if(e.target===cm)close()});const nav=document.getElementById("copyrightNavOpen");if(nav&&open)nav.onclick=()=>open.click()})();
+</script>
+<script>
+(function(){const panel=document.getElementById("premiumPanel"),open=document.getElementById("premiumOpen"),close=document.getElementById("premiumClose"),hide=()=>{panel.classList.remove("show");panel.setAttribute("aria-hidden","true")};if(open)open.onclick=()=>{panel.classList.add("show");panel.setAttribute("aria-hidden","false")};if(close)close.onclick=hide;if(panel)panel.addEventListener("click",e=>{if(e.target===panel)hide()});document.querySelectorAll("[data-premium-close]").forEach(b=>b.onclick=hide)})();
+</script>
+<script>
+(function(){const pm=document.getElementById("paymentModal"),pc=document.getElementById("paymentClose"),close=()=>{pm.classList.remove("show");pm.setAttribute("aria-hidden","true")};if(pc)pc.onclick=close;if(pm)pm.addEventListener("click",e=>{if(e.target===pm)close()});document.querySelectorAll(".paymentMethod").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".paymentMethod").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");const n=document.getElementById("paymentAccountNote");if(n)n.textContent=btn.dataset.method+" selected. Your payment account/link can be connected later."});document.querySelectorAll(".payBtn").forEach(btn=>btn.onclick=()=>{const panel=document.getElementById("premiumPanel");if(panel){panel.classList.remove("show");panel.setAttribute("aria-hidden","true")}document.getElementById("paymentTitle").textContent="Payment — "+btn.dataset.plan;pm.classList.add("show");pm.setAttribute("aria-hidden","false")})})();
+</script>
+<script>
+(function(){function start(){const loader=document.getElementById("startupLoader");if(!loader)return;setTimeout(()=>{loader.style.opacity="0";loader.style.visibility="hidden";loader.style.pointerEvents="none";setTimeout(()=>loader.remove(),450)},1500)}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start()})();
+</script>
+<script>
+(function(){document.querySelectorAll(".websiteCard").forEach(card=>{card.addEventListener("pointermove",e=>{if(innerWidth<800)return;const r=card.getBoundingClientRect();card.style.transform=`translateY(-12px) rotateX(${-(e.clientY-r.top)/r.height*10+5}deg) rotateY(${(e.clientX-r.left)/r.width*12-6}deg) scale(1.018)`});card.addEventListener("pointerleave",()=>card.style.transform="")})})();
+</script>
+<script>
+(function(){const url="https://istaqf.github.io/3D-experiences/";document.querySelectorAll(".featureAutoOpen").forEach(card=>{const open=()=>window.location.href=url;card.onclick=open;card.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}}})})();
+</script>
+<script>
+(function(){const modal=document.getElementById("experienceModal"),open=document.getElementById("experienceOpen"),close=document.getElementById("experienceClose"),list=document.getElementById("commentList"),form=document.getElementById("commentForm"),openForm=document.getElementById("openCommentForm"),KEY="sqezx3d_comments";const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");function render(){let items=[];try{items=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){}list.innerHTML=items.length?items.map(c=>'<article class="commentItem"><strong>'+esc(c.name)+'</strong><time>'+new Date(c.time).toLocaleString()+'</time><p>'+esc(c.text)+'</p></article>').join(""):'<article class="commentItem"><strong>Community</strong><p>No comments yet. Be the first to share your experience.</p></article>'}const show=()=>{render();if(form)form.classList.remove("commentFormVisible");modal.classList.add("show");modal.setAttribute("aria-hidden","false")},hide=()=>{modal.classList.remove("show");modal.setAttribute("aria-hidden","true")};if(open)open.onclick=show;if(close)close.onclick=hide;if(openForm)openForm.onclick=()=>form.classList.add("commentFormVisible");if(modal)modal.addEventListener("click",e=>{if(e.target===modal)hide()});if(form)form.onsubmit=e=>{e.preventDefault();const name=document.getElementById("commentName").value.trim(),text=document.getElementById("commentText").value.trim();if(!name||!text)return;let items=[];try{items=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(err){}items.unshift({name,text,time:Date.now()});localStorage.setItem(KEY,JSON.stringify(items.slice(0,50)));form.reset();form.classList.remove("commentFormVisible");render()}})();
+</script>
+<script>
+(function(){if(new URLSearchParams(location.search).get("experience")==="neon-core"){setTimeout(()=>{const card=document.querySelector('.websiteCard[data-url="local-neon-core"]');if(card&&typeof openPreview==='function')openPreview(card)},300)}})();
+</script>
+
+<script>
+(function(){
+  // Replace these two URLs with your own links.
+  const INSTAGRAM_URL="PASTE_YOUR_INSTAGRAM_LINK_HERE";
+  const FACEBOOK_URL="PASTE_YOUR_FACEBOOK_LINK_HERE";
+  const ig=document.getElementById("instagramLink"),fb=document.getElementById("facebookLink");
+  function setup(a,url,label){
+    if(!a)return;
+    if(url && !url.startsWith("PASTE_YOUR_")){a.href=url;}
+    else{a.addEventListener("click",function(e){e.preventDefault();alert("Add your "+label+" link in the INSTAGRAM_URL / FACEBOOK_URL setting in this file.");});}
+  }
+  setup(ig,INSTAGRAM_URL,"Instagram");
+  setup(fb,FACEBOOK_URL,"Facebook");
+})();
+</script>
+</body>
+</html>
